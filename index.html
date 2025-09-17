@@ -61,7 +61,7 @@
     .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%}
     .input:focus{border-color:var(--brand)}
     .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
-    .input[disabled]{
+    .input[disabled], .input[readonly]{
       background:#111726;
       color:rgba(230,237,243,.85);
       cursor:not-allowed;
@@ -258,7 +258,7 @@
         </div>
         <div class="body">
           <div class="field"><label>Email</label>
-            <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" disabled aria-disabled="true" />
+            <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" readonly aria-readonly="true" tabindex="-1" />
             <div id="m_email_err" class="msg-inline" style="display:none; color:var(--danger)">El email es obligatorio y no puede modificarse.</div>
             <div class="hint">Visible solo para consulta; cualquier cambio debe hacerse desde la base de datos.</div>
           </div>
@@ -531,7 +531,9 @@
       }
 
       if(act==='edit'){
-        const id = btn.dataset.id; currentEdit = currentRows.find(x=>x.id===id); openModal(currentEdit);
+        const id = btn.dataset.id;
+        const user = currentRows.find(x=>x.id===id);
+        openModal(user || null);
       }
     });
 
@@ -551,8 +553,9 @@
      */
     function openModal(u){
       if(!u) return;
-      m_email.value = u.email || '';
-      m_email.dataset.current = u.email || '';
+      const sanitizedEmail = (u.email || '').trim();
+      currentEdit = { ...u, email: sanitizedEmail };
+      m_email.value = sanitizedEmail;
       m_name.value = u.full_name || '';
       m_plan.value = u.plan || 'Básico';
       m_credits.value = u.credits ?? 0;
@@ -561,13 +564,16 @@
       m_pwd_err.style.display='none'; m_password.setAttribute('aria-invalid','false');
       modal.style.display='flex';
     }
-    qs('#closeModal').addEventListener('click', ()=> modal.style.display='none');
+    qs('#closeModal').addEventListener('click', ()=>{
+      modal.style.display='none';
+      currentEdit = null;
+    });
 
     /**
      * @returns {boolean}
      */
     function validateModal(){
-      const email = (m_email.dataset.current || '').trim();
+      const email = currentEdit?.email?.trim() || '';
       const pwd = m_password.value.trim();
       let ok = true;
 
@@ -596,7 +602,7 @@
       if(!currentEdit) return;
       if(!validateModal()) return;
 
-      const email = (m_email.dataset.current || '').trim();
+      const email = currentEdit?.email?.trim() || '';
       /** @type {UpdatePayload} */
       const payload = {
         userId: currentEdit.id,
@@ -620,12 +626,16 @@
       try { const data = JSON.parse(txt); console.log('Perfil guardado:', data.profile); } catch {}
 
       modal.style.display='none';
+      currentEdit = null;
       toast('Cambios guardados');
       loadUsers();
     });
 
     btnRecoveryModal.addEventListener('click', async()=>{
-      if(!currentEdit?.email) return;
+      if(!currentEdit?.email){
+        toast('Ese usuario no tiene email registrado','warn');
+        return;
+      }
       btnRecoveryModal.disabled = true; btnRecoveryModal.textContent = 'Enviando…';
       await api(ENDPOINTS.recovery, { method:'POST', body:{ email: currentEdit.email } }).catch(()=>{});
       btnRecoveryModal.disabled = false; btnRecoveryModal.textContent = 'Enviar link de recuperación';
