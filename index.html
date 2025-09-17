@@ -44,6 +44,8 @@
 
     /* Login */
     #loginView{max-width:520px; padding:32px; position:relative; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px}
+    #loginView .btn{width:100%}
+    #loginView .login-actions{width:100%; display:flex; flex-direction:column; gap:10px; align-items:stretch; text-align:center}
     .brand{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px}
     .brand .logo{
       width:140px; height:140px; display:grid; place-items:center;
@@ -57,8 +59,8 @@
     .muted{color:var(--muted); font-size:.92rem}
 
     .field{display:grid; gap:8px; margin:12px 0; width:100%}
-    .field label{font-size:.9rem; color:#cdd6e1}
-    .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:center}
+    .field label{font-size:.9rem; color:#cdd6e1; text-align:left}
+    .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:left}
     .input:focus{border-color:var(--brand)}
     .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
 
@@ -208,7 +210,7 @@
         <div class="muted">WF-TOOLS<strong></strong></div>
       </div>
       <div class="field">
-        <label>Email</label>
+        <label>Correo</label>
         <input id="email" class="input" type="email" placeholder="admin@tudominio.com" autocomplete="username" />
       </div>
       <div class="field">
@@ -219,7 +221,7 @@
         <span class="btn-text">Entrar</span>
         <span class="btn-spinner" style="display:none">⏳ Iniciando sesión…</span>
       </button>
-      <div class="row" style="margin-top:10px; flex-direction:column; align-items:center; text-align:center">
+      <div class="row login-actions" style="margin-top:10px">
         <button id="btnRecover" class="btn btn-ghost">Olvidé mi contraseña</button>
         <span id="loginHint" class="hint">Administrador: Devinson Mena</span>
       </div>
@@ -297,7 +299,7 @@
           <button id="closeModal" class="btn btn-ghost btn-sm">✕</button>
         </div>
         <div class="body">
-          <div class="field"><label>Email</label>
+          <div class="field"><label>Correo</label>
             <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" />
             <div id="m_email_err" class="msg-inline" style="display:none; color:var(--danger)">El email es obligatorio.</div>
           </div>
