@@ -59,10 +59,20 @@
     .muted{color:var(--muted); font-size:.92rem}
 
     .field{display:grid; gap:8px; margin:12px 0; width:100%}
-    .field label{font-size:.9rem; color:#cdd6e1; text-align:left}
+    .field label{font-size:.88rem; color:#cdd6e1; text-align:left; letter-spacing:.01em}
     .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:left}
     .input:focus{border-color:var(--brand)}
     .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+
+    #loginView .field{gap:0; margin:20px 0 0; padding-top:12px; position:relative}
+    #loginView .field:first-of-type{margin-top:6px}
+    #loginView .field label{
+      position:absolute; top:0; left:16px; transform:translateY(-50%);
+      background:rgba(12,17,23,.92); padding:2px 12px; border-radius:999px;
+      font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      color:#8fbfe6; box-shadow:0 6px 16px rgba(14,165,233,.18);
+    }
+    #loginView .field .input{margin-top:6px}
 
     .btn{cursor:pointer; user-select:none; border:0; border-radius:14px; padding:12px 14px; font-weight:700; letter-spacing:.02em; display:inline-flex; align-items:center; justify-content:center; gap:8px}
     .btn[disabled]{opacity:.6; cursor:not-allowed}
@@ -127,7 +137,7 @@
 
     /* Responsive table wrapper */
     .table-wrap{width:100%; overflow:auto; padding-bottom:6px}
-    table{width:100%; border-collapse:separate; border-spacing:0 10px; min-width:800px}
+    table{width:100%; border-collapse:separate; border-spacing:0 10px; min-width:940px}
     thead th{font-size:.85rem; text-align:left; color:#cdd6e1; padding:0 10px; white-space:nowrap}
     tbody tr{background:var(--card); border:1px solid var(--border)}
     tbody td{padding:12px 10px; vertical-align:middle}
@@ -155,6 +165,7 @@
     .credit-high{background:rgba(34,197,94,.15); color:#bbf7d0; border-color:rgba(34,197,94,.35)}
     .credit-high .dot{background:var(--ok)}
     .credit-warning{margin-top:6px; padding:8px 10px; border-radius:12px; font-size:.78rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fecaca}
+    .password-chip{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:10px; border:1px dashed rgba(56,189,248,.45); background:rgba(14,165,233,.12); color:#e0f2fe; font-size:.78rem; font-weight:600; letter-spacing:.02em;}
     .pager{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px}
 
     .view{opacity:0; transform:translateY(14px); transition:opacity .28s ease, transform .28s ease; pointer-events:none}
@@ -178,11 +189,12 @@
 
     /* Mobile cards view */
     @media (max-width: 780px){
+      .panel{padding:16px 14px 26px}
       .table-wrap{display:none}
-      .cards{display:grid; gap:10px}
-      .card-row{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px; display:grid; gap:8px}
+      .cards{display:grid; gap:12px; justify-content:center; width:100%}
+      .card-row{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:grid; gap:10px; width:min(100%,520px)}
       .row-top{display:flex; align-items:center; gap:10px; justify-content:space-between}
-      .row-mid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+      .row-mid{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
       .row-actions{display:flex; gap:8px; flex-wrap:wrap}
       .label{font-size:.75rem; color:var(--muted)}
     }
@@ -270,8 +282,9 @@
                 <th>Nombre</th>
                 <th>Plan</th>
                 <th>Créditos</th>
+                <th>Contraseña inicial</th>
                 <th>ID</th>
-                <th style="width:280px">Acciones</th>
+                <th style="width:300px">Acciones</th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
@@ -413,6 +426,26 @@
 
     function avatarFor(){ return `<div class="avatar"><img src="${LOGO_URL}" alt="WF TOOLS" /></div>` }
 
+    function escapeHTML(str){
+      if(str == null) return '';
+      const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+      return String(str).replace(/[&<>"']/g, ch => map[ch] || ch);
+    }
+    function getInitialPassword(u){
+      if(!u) return '';
+      const candidates = [
+        u.initial_password, u.temp_password, u.password_created,
+        u.generated_password, u.password, u.default_password, u.first_password
+      ];
+      for(const value of candidates){
+        if(typeof value === 'string'){
+          const trimmed = value.trim();
+          if(trimmed) return trimmed;
+        }
+      }
+      return '';
+    }
+
     function creditMeta(rawCredits){
       const value = Number(rawCredits ?? 0);
       if(!Number.isFinite(value) || value <= 0) return { value:0, level:'low', text:'Sin créditos', recommend:true };
@@ -524,32 +557,44 @@
 
       let totalCredits = 0;
       let lowCount = 0;
+      let inactiveCount = 0;
 
       for(const u of currentRows){
         const meta = creditMeta(u.credits);
         const creditBadgeHtml = creditBadge(meta);
         const displayName = (u.full_name && u.full_name.trim()) || u.email || 'Usuario';
-        const creditWarningHtml = meta.recommend ? `<div class="credit-warning">Recargar créditos a ${displayName}</div>` : '';
+        const safeDisplayName = escapeHTML(displayName);
+        const creditWarningHtml = meta.recommend ? `<div class="credit-warning">Recargar créditos a ${safeDisplayName}</div>` : '';
         const email = u.email || '';
         const fullName = u.full_name || '';
+        const plan = u.plan || '—';
+        const id = u.id || '';
+        const initialPassword = getInitialPassword(u);
+        const passwordHtml = initialPassword ? `<span class="password-chip">${escapeHTML(initialPassword)}</span>` : '<span class="muted">Sin registro</span>';
+        const safeEmail = escapeHTML(email);
+        const safeFullName = fullName ? escapeHTML(fullName) : '—';
+        const safePlan = escapeHTML(plan);
+        const safeId = escapeHTML(id);
 
         totalCredits += meta.value;
         if(meta.recommend) lowCount++;
+        if(meta.value <= 0) inactiveCount++;
 
         // tabla
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${avatarFor()}</td>
-          <td>${email}</td>
-          <td>${fullName}</td>
-          <td><span class="tag">${u.plan || '—'}</span></td>
+          <td>${safeEmail}</td>
+          <td>${safeFullName}</td>
+          <td><span class="tag">${safePlan}</span></td>
           <td>${creditBadgeHtml}${creditWarningHtml}</td>
-          <td style="font-size:.8rem;color:var(--muted)">${u.id}</td>
+          <td>${passwordHtml}</td>
+          <td style="font-size:.8rem;color:var(--muted)">${safeId}</td>
           <td>
             <div class="actions">
-              <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${u.id}">Editar</button>
-              <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${email}">Link recuperación</button>
-              <button class="btn btn-primary btn-sm" data-act="password" data-id="${u.id}">Cambiar contraseña</button>
+              <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${safeId}">Editar</button>
+              <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${safeEmail}">Link recuperación</button>
+              <button class="btn btn-primary btn-sm" data-act="password" data-id="${safeId}">Cambiar contraseña</button>
             </div>
           </td>`;
         $rows.append(tr);
@@ -562,27 +607,30 @@
             <div style="display:flex; align-items:center; gap:10px">
               ${avatarFor()}
               <div>
-                <div style="font-weight:700">${fullName || '—'}</div>
-                <div class="muted" style="font-size:.85rem">${email}</div>
+                <div style="font-weight:700">${safeFullName}</div>
+                <div class="muted" style="font-size:.85rem">${safeEmail}</div>
               </div>
             </div>
-            <span class="tag">${u.plan || '—'}</span>
+            <span class="tag">${safePlan}</span>
           </div>
           <div class="row-mid">
             <div><div class="label">Créditos</div><div>${creditBadgeHtml}</div></div>
-            <div><div class="label">ID</div><div style="font-size:.8rem;color:var(--muted)">${u.id}</div></div>
+            <div><div class="label">Contraseña inicial</div><div>${passwordHtml}</div></div>
+            <div><div class="label">ID</div><div style="font-size:.8rem;color:var(--muted)">${safeId}</div></div>
           </div>
           ${creditWarningHtml}
           <div class="row-actions">
-            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${u.id}">Editar</button>
-            <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${email}">Recuperación</button>
-            <button class="btn btn-primary btn-sm" data-act="password" data-id="${u.id}">Cambiar contraseña</button>
+            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${safeId}">Editar</button>
+            <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${safeEmail}">Recuperación</button>
+            <button class="btn btn-primary btn-sm" data-act="password" data-id="${safeId}">Cambiar contraseña</button>
           </div>`;
         $cards.append(card);
       }
 
       const totalAccounts = currentRows.length;
-      const avgCredits = totalAccounts ? totalCredits / totalAccounts : 0;
+      const activeCount = totalAccounts - inactiveCount;
+      const avgCredits = activeCount ? totalCredits / activeCount : 0;
+      const avgText = activeCount ? `Promedio ${averageFmt.format(avgCredits)} créditos` : 'Sin cuentas activas';
       $creditSummary.style.display='flex';
       $creditSummary.innerHTML = `
         <div class="stat-card">
@@ -596,9 +644,17 @@
         <div class="stat-card">
           <div class="stat-icon">👥</div>
           <div class="stat-body">
-            <span class="stat-title">Cuentas visibles</span>
-            <span class="stat-value">${totalAccounts}</span>
-            <span class="stat-sub">Promedio ${averageFmt.format(avgCredits)} créditos</span>
+            <span class="stat-title">Cuentas activas</span>
+            <span class="stat-value">${activeCount}</span>
+            <span class="stat-sub">${avgText}</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛑</div>
+          <div class="stat-body">
+            <span class="stat-title">Cuentas inactivas</span>
+            <span class="stat-value">${inactiveCount}</span>
+            <span class="stat-sub">Recarga las cuentas sin créditos</span>
           </div>
         </div>
         <div class="stat-card">
