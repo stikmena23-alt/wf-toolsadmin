@@ -85,11 +85,23 @@
     .title .logo img{width:100%; height:100%; object-fit:contain}
     .title h2{font-family:'Orbitron'; margin:0; font-size:1.2rem}
 
-    .toolbar{display:flex; gap:10px; flex-wrap:wrap}
-    .search{display:flex; gap:8px; flex:1; min-width:220px}
+    .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .search{display:flex; gap:8px; flex:1; min-width:220px; align-items:center}
     .search input{flex:1}
+    .toolbar .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600}
+    .toolbar .icon{font-size:1rem}
+    .toolbar .btn-search{background:rgba(14,165,233,.16); color:#38bdf8; border:1px solid rgba(14,165,233,.35)}
+    .toolbar .btn-reload{background:rgba(59,130,246,.15); color:#93c5fd; border:1px solid rgba(59,130,246,.35)}
+    .toolbar .btn-logout{background:rgba(239,68,68,.18); color:#fca5a5; border:1px solid rgba(239,68,68,.45)}
 
     .panel{padding:16px; position:relative}
+    .stats{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px}
+    .stat-card{flex:1; min-width:200px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:var(--shadow)}
+    .stat-icon{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:1.3rem; background:rgba(14,165,233,.14); color:#38bdf8}
+    .stat-body{display:grid; gap:4px}
+    .stat-title{font-size:.85rem; color:var(--muted)}
+    .stat-value{font-size:1.2rem; font-weight:700}
+    .stat-sub{font-size:.8rem; color:#8fbfe6}
 
     /* overlay loading */
     .overlay{
@@ -105,8 +117,11 @@
     thead th{font-size:.85rem; text-align:left; color:#cdd6e1; padding:0 10px; white-space:nowrap}
     tbody tr{background:var(--card); border:1px solid var(--border)}
     tbody td{padding:12px 10px; vertical-align:middle}
+    tbody td:first-child{border-radius:12px 0 0 12px}
+    tbody td:last-child{border-radius:0 12px 12px 0}
     tbody tr{transition:transform .12s ease, box-shadow .12s ease}
     tbody tr:hover{transform:translateY(-2px); box-shadow:0 10px 16px rgba(0,0,0,.25)}
+    tbody tr td{border-top:1px solid rgba(255,255,255,.03); border-bottom:1px solid rgba(0,0,0,.25)}
 
     /* Avatar con logo */
     .avatar{
@@ -116,7 +131,17 @@
     .avatar img{width:100%; height:100%; object-fit:contain}
 
     .tag{font-size:.75rem; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:#0a0f15; color:#b7c3d1}
-    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+    .credit-badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:.8rem; font-weight:600; letter-spacing:.01em; border:1px solid transparent; flex-wrap:wrap; justify-content:flex-start}
+    .credit-badge .dot{width:10px; height:10px; border-radius:50%; display:inline-block}
+    .credit-low{background:rgba(239,68,68,.12); color:#fecaca; border-color:rgba(239,68,68,.35)}
+    .credit-low .dot{background:var(--danger)}
+    .credit-medium{background:rgba(245,158,11,.12); color:#fde68a; border-color:rgba(245,158,11,.3)}
+    .credit-medium .dot{background:var(--warn)}
+    .credit-high{background:rgba(34,197,94,.15); color:#bbf7d0; border-color:rgba(34,197,94,.35)}
+    .credit-high .dot{background:var(--ok)}
+    .credit-warning{margin-top:6px; padding:8px 10px; border-radius:12px; font-size:.78rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fecaca}
+    .password-chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:10px; font-family:'Space Grotesk', monospace; font-size:.8rem; letter-spacing:.02em; background:#0b0f15; border:1px solid var(--border); color:#cbd5f5}
     .pager{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px}
 
     /* Empty + skeletons */
@@ -196,14 +221,15 @@
         <div class="toolbar">
           <div class="search">
             <input id="q" class="input" placeholder="Buscar por email o nombre" />
-            <button id="btnSearch" class="btn btn-ghost">Buscar</button>
+            <button id="btnSearch" class="btn btn-search"><span class="icon">🔍</span><span>Buscar</span></button>
           </div>
-          <button id="btnReload" class="btn btn-ghost">Recargar</button>
-          <button id="btnLogout" class="btn btn-primary">Salir</button>
+          <button id="btnReload" class="btn btn-reload"><span class="icon">🔄</span><span>Recargar</span></button>
+          <button id="btnLogout" class="btn btn-logout"><span class="icon">🚪</span><span>Salir</span></button>
         </div>
       </header>
 
       <div class="panel">
+        <div id="creditSummary" class="stats" style="display:none"></div>
         <!-- overlay -->
         <div id="overlay" class="overlay"><div class="spinner">🔄 Cargando usuarios…</div></div>
 
@@ -222,6 +248,7 @@
                 <th>Nombre</th>
                 <th>Plan</th>
                 <th>Créditos</th>
+                <th>Contraseña inicial</th>
                 <th>ID</th>
                 <th style="width:280px">Acciones</th>
               </tr>
@@ -310,6 +337,9 @@
     const loginView = qs('#loginView'), adminView = qs('#adminView'), loginError = qs('#loginError');
     const btnLogin = qs('#btnLogin'), btnLoginText = btnLogin.querySelector('.btn-text'), btnLoginSpinner = btnLogin.querySelector('.btn-spinner');
     const $overlay = qs('#overlay');
+    const $creditSummary = qs('#creditSummary');
+    const numberFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
+    const averageFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
 
     // Inyectar logo en login y header
     qs('#loginLogo').src = LOGO_URL;
@@ -327,6 +357,27 @@
     }
 
     function avatarFor(){ return `<div class="avatar"><img src="${LOGO_URL}" alt="WF TOOLS" /></div>` }
+
+    const PASSWORD_KEYS = ['initial_password','created_password','creation_password','temp_password','generated_password'];
+    function getInitialPassword(u){
+      for(const key of PASSWORD_KEYS){
+        const value = u?.[key];
+        if(value) return value;
+      }
+      return '';
+    }
+
+    function creditMeta(rawCredits){
+      const value = Number(rawCredits ?? 0);
+      if(!Number.isFinite(value) || value <= 0) return { value:0, level:'low', text:'Sin créditos', recommend:true };
+      if(value < 20) return { value, level:'low', text:'Crédito bajo', recommend:true };
+      if(value < 60) return { value, level:'medium', text:'Nivel medio', recommend:false };
+      return { value, level:'high', text:'Nivel saludable', recommend:false };
+    }
+
+    function creditBadge(meta){
+      return `<div class="credit-badge credit-${meta.level}"><span class="dot"></span><span>${numberFmt.format(meta.value)} créditos</span><span>· ${meta.text}</span></div>`;
+    }
 
     /************* AUTH & API *************/
     async function authHeaderAsync(){
@@ -399,22 +450,40 @@
 
     function renderRows(){
       $rows.innerHTML=''; $cards.innerHTML='';
+      $creditSummary.style.display='none';
       if(!currentRows.length){ $empty.style.display='block'; return; }
       $empty.style.display='none';
+
+      let totalCredits = 0;
+      let lowCount = 0;
+
       for(const u of currentRows){
+        const meta = creditMeta(u.credits);
+        const creditBadgeHtml = creditBadge(meta);
+        const displayName = (u.full_name && u.full_name.trim()) || u.email || 'Usuario';
+        const creditWarningHtml = meta.recommend ? `<div class="credit-warning">Recargar créditos a ${displayName}</div>` : '';
+        const initialPwd = getInitialPassword(u);
+        const passwordHtml = initialPwd ? `<span class="password-chip">${initialPwd}</span>` : '<span class="muted">—</span>';
+        const email = u.email || '';
+        const fullName = u.full_name || '';
+
+        totalCredits += meta.value;
+        if(meta.recommend) lowCount++;
+
         // tabla
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${avatarFor()}</td>
-          <td>${u.email || ''}</td>
-          <td>${u.full_name || ''}</td>
+          <td>${email}</td>
+          <td>${fullName}</td>
           <td><span class="tag">${u.plan || '—'}</span></td>
-          <td>${u.credits ?? 0}</td>
+          <td>${creditBadgeHtml}${creditWarningHtml}</td>
+          <td>${passwordHtml}</td>
           <td style="font-size:.8rem;color:var(--muted)">${u.id}</td>
           <td>
             <div class="actions">
               <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${u.id}">Editar</button>
-              <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${u.email}">Link recuperación</button>
+              <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${email}">Link recuperación</button>
               <button class="btn btn-primary btn-sm" data-act="password" data-id="${u.id}">Cambiar contraseña</button>
             </div>
           </td>`;
@@ -428,23 +497,57 @@
             <div style="display:flex; align-items:center; gap:10px">
               ${avatarFor()}
               <div>
-                <div style="font-weight:700">${u.full_name || '—'}</div>
-                <div class="muted" style="font-size:.85rem">${u.email || ''}</div>
+                <div style="font-weight:700">${fullName || '—'}</div>
+                <div class="muted" style="font-size:.85rem">${email}</div>
               </div>
             </div>
             <span class="tag">${u.plan || '—'}</span>
           </div>
           <div class="row-mid">
-            <div><div class="label">Créditos</div><div>${u.credits ?? 0}</div></div>
+            <div><div class="label">Créditos</div><div>${creditBadgeHtml}</div></div>
             <div><div class="label">ID</div><div style="font-size:.8rem;color:var(--muted)">${u.id}</div></div>
           </div>
+          <div>
+            <div class="label">Contraseña inicial</div>
+            <div>${passwordHtml}</div>
+          </div>
+          ${creditWarningHtml}
           <div class="row-actions">
             <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${u.id}">Editar</button>
-            <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${u.email}">Recuperación</button>
-            <button class="btn btn-primary btn-sm" data-act="password" data-id="${u.id}">Cambiar contraseñac</button>
+            <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${email}">Recuperación</button>
+            <button class="btn btn-primary btn-sm" data-act="password" data-id="${u.id}">Cambiar contraseña</button>
           </div>`;
         $cards.append(card);
       }
+
+      const totalAccounts = currentRows.length;
+      const avgCredits = totalAccounts ? totalCredits / totalAccounts : 0;
+      $creditSummary.style.display='flex';
+      $creditSummary.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">💠</div>
+          <div class="stat-body">
+            <span class="stat-title">Créditos activos</span>
+            <span class="stat-value">${numberFmt.format(totalCredits)}</span>
+            <span class="stat-sub">Suma de todas las cuentas listadas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-body">
+            <span class="stat-title">Cuentas visibles</span>
+            <span class="stat-value">${totalAccounts}</span>
+            <span class="stat-sub">Promedio ${averageFmt.format(avgCredits)} créditos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🚨</div>
+          <div class="stat-body">
+            <span class="stat-title">Alertas de crédito</span>
+            <span class="stat-value">${lowCount}</span>
+            <span class="stat-sub">${lowCount ? 'Atiende las cuentas marcadas en rojo' : 'Todo en orden'}</span>
+          </div>
+        </div>`;
     }
 
     // acciones delegadas
