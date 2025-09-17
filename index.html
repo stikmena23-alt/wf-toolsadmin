@@ -33,7 +33,7 @@
       color:var(--text);
     }
     a{color:var(--brand)}
-    .wrap{min-height:100%; display:grid; place-items:center; padding:28px}
+    .wrap{min-height:100%; display:grid; place-items:center; padding:28px; position:relative}
 
     /* Card base */
     .card{
@@ -43,7 +43,7 @@
     }
 
     /* Login */
-    #loginView{max-width:460px; padding:26px; position:relative}
+    #loginView{max-width:520px; padding:32px; position:relative; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px}
     .brand{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px}
     .brand .logo{
       width:140px; height:140px; display:grid; place-items:center;
@@ -56,13 +56,13 @@
     .brand h1{font-family:'Orbitron',ui-sans-serif; font-size:1.4rem; letter-spacing:.04em; margin:6px 0 0}
     .muted{color:var(--muted); font-size:.92rem}
 
-    .field{display:grid; gap:8px; margin:12px 0}
+    .field{display:grid; gap:8px; margin:12px 0; width:100%}
     .field label{font-size:.9rem; color:#cdd6e1}
-    .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%}
+    .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:center}
     .input:focus{border-color:var(--brand)}
     .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
 
-    .btn{cursor:pointer; user-select:none; border:0; border-radius:14px; padding:12px 14px; font-weight:700; letter-spacing:.02em; display:inline-flex; align-items:center; gap:8px}
+    .btn{cursor:pointer; user-select:none; border:0; border-radius:14px; padding:12px 14px; font-weight:700; letter-spacing:.02em; display:inline-flex; align-items:center; justify-content:center; gap:8px}
     .btn[disabled]{opacity:.6; cursor:not-allowed}
     .btn-primary{background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:#00131f; box-shadow:0 10px 25px rgba(14,165,233,.35)}
     .btn-ghost{background:#0b0f15; color:#fff; border:1px solid var(--border)}
@@ -73,7 +73,7 @@
     .error{color:var(--danger); font-size:.9rem; margin-top:6px}
 
     /* Admin layout */
-    #adminView{display:none; max-width:1200px; margin:0 auto; padding:0}
+    #adminView{max-width:1200px; margin:0 auto; padding:0}
     .header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border)}
     .title{display:flex; gap:12px; align-items:center}
     .title .logo{
@@ -95,8 +95,8 @@
     .toolbar .btn-logout{background:rgba(239,68,68,.18); color:#fca5a5; border:1px solid rgba(239,68,68,.45)}
 
     .panel{padding:16px; position:relative}
-    .stats{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px}
-    .stat-card{flex:1; min-width:200px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:var(--shadow)}
+    .stats{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px; justify-content:center}
+    .stat-card{flex:1 1 280px; min-width:260px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow)}
     .stat-icon{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:1.3rem; background:rgba(14,165,233,.14); color:#38bdf8}
     .stat-body{display:grid; gap:4px}
     .stat-title{font-size:.85rem; color:var(--muted)}
@@ -110,6 +110,18 @@
     }
     .overlay.show{display:grid}
     .spinner{padding:10px 14px; border:1px solid var(--border); background:var(--panel); border-radius:12px; color:#8fbfe6}
+
+    .session-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(10,11,15,.45);
+      backdrop-filter: blur(6px); z-index:90; opacity:0; transition:opacity .28s ease;
+    }
+    .session-overlay.show{display:flex; opacity:1}
+    .session-box{padding:16px 20px; border-radius:16px; border:1px solid var(--border); background:rgba(12,17,23,.85);
+      box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; font-weight:600; color:#8fbfe6}
+    .session-box .loader{width:18px; height:18px; border-radius:50%; border:3px solid rgba(56,189,248,.4);
+      border-top-color:var(--brand-2); animation:spin .8s linear infinite}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
 
     /* Responsive table wrapper */
     .table-wrap{width:100%; overflow:auto; padding-bottom:6px}
@@ -141,8 +153,10 @@
     .credit-high{background:rgba(34,197,94,.15); color:#bbf7d0; border-color:rgba(34,197,94,.35)}
     .credit-high .dot{background:var(--ok)}
     .credit-warning{margin-top:6px; padding:8px 10px; border-radius:12px; font-size:.78rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fecaca}
-    .password-chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:10px; font-family:'Space Grotesk', monospace; font-size:.8rem; letter-spacing:.02em; background:#0b0f15; border:1px solid var(--border); color:#cbd5f5}
     .pager{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px}
+
+    .view{opacity:0; transform:translateY(14px); transition:opacity .28s ease, transform .28s ease; pointer-events:none}
+    .view.active{opacity:1; transform:none; pointer-events:auto}
 
     /* Empty + skeletons */
     .empty{display:grid; place-items:center; padding:26px; color:var(--muted)}
@@ -177,9 +191,15 @@
 </head>
 <body>
   <div class="wrap">
+    <div id="sessionOverlay" class="session-overlay" aria-hidden="true">
+      <div class="session-box">
+        <div class="loader" aria-hidden="true"></div>
+        <span class="session-message">Gestionando sesión…</span>
+      </div>
+    </div>
 
     <!-- LOGIN VIEW -->
-    <section id="loginView" class="card">
+    <section id="loginView" class="card view active" data-display="flex">
       <div class="brand">
         <div class="logo">
           <img id="loginLogo" alt="WF TOOLS logo">
@@ -195,11 +215,11 @@
         <label>Contraseña</label>
         <input id="password" class="input" type="password" placeholder="••••••••" autocomplete="current-password" />
       </div>
-      <button id="btnLogin" class="btn btn-primary" style="width:100%">
+      <button id="btnLogin" class="btn btn-primary">
         <span class="btn-text">Entrar</span>
         <span class="btn-spinner" style="display:none">⏳ Iniciando sesión…</span>
       </button>
-      <div class="row" style="margin-top:10px; justify-content:space-between">
+      <div class="row" style="margin-top:10px; flex-direction:column; align-items:center; text-align:center">
         <button id="btnRecover" class="btn btn-ghost">Olvidé mi contraseña</button>
         <span id="loginHint" class="hint">Administrador: Devinson Mena</span>
       </div>
@@ -207,7 +227,7 @@
     </section>
 
     <!-- ADMIN VIEW -->
-    <section id="adminView" class="card">
+    <section id="adminView" class="card view" data-display="block" style="display:none">
       <header class="header">
         <div class="title">
           <div class="logo">
@@ -248,7 +268,6 @@
                 <th>Nombre</th>
                 <th>Plan</th>
                 <th>Créditos</th>
-                <th>Contraseña inicial</th>
                 <th>ID</th>
                 <th style="width:280px">Acciones</th>
               </tr>
@@ -338,6 +357,8 @@
     const btnLogin = qs('#btnLogin'), btnLoginText = btnLogin.querySelector('.btn-text'), btnLoginSpinner = btnLogin.querySelector('.btn-spinner');
     const $overlay = qs('#overlay');
     const $creditSummary = qs('#creditSummary');
+    const sessionOverlay = qs('#sessionOverlay');
+    const sessionMessage = sessionOverlay?.querySelector('.session-message');
     const numberFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
     const averageFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
 
@@ -346,8 +367,40 @@
     qs('#headerLogo').src = LOGO_URL;
 
     /************* UI HELPERS *************/
-    function show(v){ v.style.display='block'; } function hide(v){ v.style.display='none'; }
+    function show(v){
+      if(!v) return;
+      if(v.classList && v.classList.contains('view')){
+        const desired = v.dataset.display || 'block';
+        v.style.display = desired;
+        requestAnimationFrame(()=> v.classList.add('active'));
+      } else {
+        v.style.display='block';
+      }
+    }
+    function hide(v){
+      if(!v) return;
+      if(v.classList && v.classList.contains('view')){
+        v.classList.remove('active');
+        setTimeout(()=>{ v.style.display='none'; }, 220);
+      } else {
+        v.style.display='none';
+      }
+    }
     function overlay(on){ $overlay.classList.toggle('show', !!on); }
+    function sessionLoading(on, text='Gestionando sesión…'){
+      if(!sessionOverlay) return;
+      if(on){
+        if(sessionMessage) sessionMessage.textContent = text;
+        sessionOverlay.style.display='flex';
+        requestAnimationFrame(()=> sessionOverlay.classList.add('show'));
+      } else {
+        sessionOverlay.classList.remove('show');
+        setTimeout(()=>{
+          sessionOverlay.style.display='none';
+          if(sessionMessage) sessionMessage.textContent='';
+        }, 220);
+      }
+    }
     function toast(msg, type='ok'){
       const el = document.createElement('div');
       el.textContent = msg;
@@ -357,15 +410,6 @@
     }
 
     function avatarFor(){ return `<div class="avatar"><img src="${LOGO_URL}" alt="WF TOOLS" /></div>` }
-
-    const PASSWORD_KEYS = ['initial_password','created_password','creation_password','temp_password','generated_password'];
-    function getInitialPassword(u){
-      for(const key of PASSWORD_KEYS){
-        const value = u?.[key];
-        if(value) return value;
-      }
-      return '';
-    }
 
     function creditMeta(rawCredits){
       const value = Number(rawCredits ?? 0);
@@ -390,7 +434,7 @@
       if(query) Object.entries(query).forEach(([k,v])=> v!=null && url.searchParams.set(k,String(v)));
       const auth = await authHeaderAsync();
       const res = await fetch(url, { method, headers:{ 'Content-Type':'application/json', ...auth, ...headers }, body: body? JSON.stringify(body): null });
-      if(res.status===401){ toast('Sesión expirada o no autorizada', 'warn'); await sb.auth.signOut(); hide(adminView); show(loginView); }
+      if(res.status===401){ toast('Sesión expirada o no autorizada', 'warn'); await sb.auth.signOut(); hide(adminView); show(loginView); sessionLoading(false); }
       return res;
     }
     async function guardAdmin(){
@@ -407,11 +451,21 @@
       const email = qs('#email').value.trim();
       const password = qs('#password').value;
       if(!email || !password){ loginError.style.display='block'; loginError.textContent='Completa email y contraseña'; return; }
+      sessionLoading(true, 'Iniciando sesión…');
       btnLogin.disabled=true; btnLoginText.style.display='none'; btnLoginSpinner.style.display='inline';
       const { error } = await sb.auth.signInWithPassword({ email, password });
       btnLogin.disabled=false; btnLoginText.style.display='inline'; btnLoginSpinner.style.display='none';
-      if(error){ loginError.style.display='block'; loginError.textContent = error.message; return; }
-      const ok = await guardAdmin(); if(ok){ hide(loginView); show(adminView); loadUsers(); toast('Bienvenido, admin'); }
+      if(error){ sessionLoading(false); loginError.style.display='block'; loginError.textContent = error.message; return; }
+      const ok = await guardAdmin();
+      if(ok){
+        hide(loginView);
+        show(adminView);
+        loadUsers();
+        toast('Bienvenido, admin');
+        setTimeout(()=>sessionLoading(false), 320);
+      } else {
+        sessionLoading(false);
+      }
     });
 
     qs('#btnRecover').addEventListener('click', async()=>{
@@ -420,8 +474,20 @@
       toast('Si el correo existe, se envió link de recuperación');
     });
 
-    qs('#btnLogout').addEventListener('click', async()=>{ await sb.auth.signOut(); hide(adminView); show(loginView); qs('#password').value=''; });
-    sb.auth.onAuthStateChange((_, s)=>{ if(!s){ hide(adminView); show(loginView); } });
+    qs('#btnLogout').addEventListener('click', async()=>{
+      sessionLoading(true, 'Cerrando sesión…');
+      await sb.auth.signOut();
+      hide(adminView);
+      show(loginView);
+      qs('#password').value='';
+    });
+    sb.auth.onAuthStateChange((_, s)=>{
+      if(!s){
+        hide(adminView);
+        show(loginView);
+        setTimeout(()=>sessionLoading(false), 250);
+      }
+    });
 
     /************* LISTAR USUARIOS *************/
     let searchTimer = null;
@@ -462,8 +528,6 @@
         const creditBadgeHtml = creditBadge(meta);
         const displayName = (u.full_name && u.full_name.trim()) || u.email || 'Usuario';
         const creditWarningHtml = meta.recommend ? `<div class="credit-warning">Recargar créditos a ${displayName}</div>` : '';
-        const initialPwd = getInitialPassword(u);
-        const passwordHtml = initialPwd ? `<span class="password-chip">${initialPwd}</span>` : '<span class="muted">—</span>';
         const email = u.email || '';
         const fullName = u.full_name || '';
 
@@ -478,7 +542,6 @@
           <td>${fullName}</td>
           <td><span class="tag">${u.plan || '—'}</span></td>
           <td>${creditBadgeHtml}${creditWarningHtml}</td>
-          <td>${passwordHtml}</td>
           <td style="font-size:.8rem;color:var(--muted)">${u.id}</td>
           <td>
             <div class="actions">
@@ -506,10 +569,6 @@
           <div class="row-mid">
             <div><div class="label">Créditos</div><div>${creditBadgeHtml}</div></div>
             <div><div class="label">ID</div><div style="font-size:.8rem;color:var(--muted)">${u.id}</div></div>
-          </div>
-          <div>
-            <div class="label">Contraseña inicial</div>
-            <div>${passwordHtml}</div>
           </div>
           ${creditWarningHtml}
           <div class="row-actions">
