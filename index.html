@@ -252,7 +252,7 @@
         </div>
         <div class="body">
           <div class="field"><label>Email</label>
-            <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" />
+            <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" readonly />
             <div id="m_email_err" class="msg-inline" style="display:none; color:var(--danger)">El email es obligatorio.</div>
           </div>
           <div class="field"><label>Nombre</label><input id="m_name" class="input" type="text" /></div>
@@ -527,9 +527,10 @@
       if(!currentEdit) return;
       if(!validateModal()) return;
 
+      const email = m_email.value.trim();
       const payload = {
         userId: currentEdit.id,
-        email: m_email.value.trim(),
+        email,
         full_name: (m_name.value.trim() || null),
         plan: m_plan.value,
         credits: Number(m_credits.value) || 0,
