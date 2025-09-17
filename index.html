@@ -495,8 +495,6 @@
       m_plan.value = u.plan || 'Básico';
       m_credits.value = u.credits ?? 0;
       m_password.value = '';
-      m_email.setAttribute('data-current', emailStored);
-      m_email.dataset.current = emailStored;
       m_email_err.style.display='none'; m_email.setAttribute('aria-invalid','false');
       m_pwd_err.style.display='none'; m_password.setAttribute('aria-invalid','false');
       modal.style.display='flex';
@@ -504,20 +502,11 @@
     qs('#closeModal').addEventListener('click', ()=> modal.style.display='none');
 
     function validateModal(){
-      const emailInput = m_email.value.trim();
-      const email = emailInput || (m_email.dataset.current || '').trim();
-      m_email.value = email;
       const pwd = m_password.value.trim();
       let ok = true;
 
-      if(!email){
-        m_email_err.style.display='block';
-        m_email.setAttribute('aria-invalid','true');
-        ok = false;
-      } else {
-        m_email_err.style.display='none';
-        m_email.setAttribute('aria-invalid','false');
-      }
+      m_email_err.style.display='none';
+      m_email.setAttribute('aria-invalid','false');
 
       if(pwd && pwd.length < 12){
         m_pwd_err.style.display='block';
@@ -535,11 +524,8 @@
       if(!currentEdit) return;
       if(!validateModal()) return;
 
-      const emailInput = m_email.value.trim();
-      const email = emailInput || (m_email.dataset.current || '').trim();
       const payload = {
         userId: currentEdit.id,
-        email,
         full_name: (m_name.value.trim() || null),
         plan: m_plan.value,
         credits: Number(m_credits.value) || 0,
@@ -557,18 +543,13 @@
         return;
       }
       try { const data = JSON.parse(txt); console.log('Perfil guardado:', data.profile); } catch {}
-
-      currentEdit.email = email;
-      m_email.dataset.current = email;
-      m_email.setAttribute('data-current', email);
       modal.style.display='none';
       toast('Cambios guardados');
       loadUsers();
     });
 
     qs('#btnRecovery').addEventListener('click', async()=>{
-      const emailInput = m_email.value.trim();
-      const email = emailInput || (m_email.dataset.current || '').trim();
+      const email = m_email.value.trim();
       if(!email) return;
       const btn = qs('#btnRecovery'); btn.disabled = true; btn.textContent = 'Enviando…';
       await api(ENDPOINTS.recovery, { method:'POST', body:{ email } }).catch(()=>{});
