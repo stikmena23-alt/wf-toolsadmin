@@ -6,335 +6,21 @@
   <title>WF-TOOLS ADMIN</title>
 
   <!-- ✅ Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="WF%20TOOLS.png?v=1">
-  <link rel="icon" type="image/png" sizes="192x192" href="WF%20TOOLS.png?v=1">
-  <link rel="apple-touch-icon" sizes="180x180" href="WF%20TOOLS.png?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="WF%20TOOLS.png?v=1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="WF%20TOOLS.png?v=1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="WF%20TOOLS.png?v=1" />
   <meta name="theme-color" content="#0a0b0f" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root{
-      --bg:#0a0b0f; --panel:#0f121a; --muted:#9aa4b2; --text:#e6edf3; --brand:#0ea5e9; --brand-2:#38bdf8;
-      --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --card:#0c1117; --border:#1b2330; --radius:18px;
-      --shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.03);
-
-      /* ===== Modal spacing vars ===== */
-      --modal-pad-x: 20px;   /* padding horizontal del modal */
-      --modal-pad-y: 16px;   /* padding vertical del modal   */
-      --modal-head-h: 56px;  /* alto mínimo del header modal */
-      --modal-foot-h: 64px;  /* alto mínimo del footer modal */
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:'Space Grotesk',ui-sans-serif,system-ui;
-      background:
-        radial-gradient(1200px 800px at 70% -10%,rgba(14,165,233,.12),transparent 40%),
-        radial-gradient(900px 600px at -10% 110%,rgba(56,189,248,.12),transparent 40%),
-        var(--bg);
-      color:var(--text);
-    }
-    a{color:var(--brand)}
-    .wrap{min-height:100%; display:grid; place-items:center; padding:28px; position:relative}
-
-    /* Card base */
-    .card{
-      width:100%;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(8px);
-    }
-
-    /* Login */
-    #loginView{
-      max-width:520px; padding:32px; position:relative; text-align:center;
-      display:flex; flex-direction:column; align-items:center; gap:12px
-    }
-    #loginView .btn{width:100%}
-    #loginView .login-actions{width:100%; display:flex; flex-direction:column; gap:10px; align-items:stretch; text-align:center}
-    .brand{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px}
-    .brand .logo{
-      width:140px; height:140px; display:grid; place-items:center; border-radius:18px;
-      background: radial-gradient(40% 40% at 50% 50%, rgba(14,165,233,.18), transparent 70%);
-      box-shadow:0 12px 38px rgba(14,165,233,.28); overflow:hidden;
-    }
-    .brand .logo img{width:100%; height:100%; object-fit:contain}
-    .brand h1{font-family:'Orbitron',ui-sans-serif; font-size:1.4rem; letter-spacing:.04em; margin:6px 0 0}
-    .muted{color:var(--muted); font-size:.92rem}
-
-    .field{display:grid; gap:6px; margin:12px 0; width:100%; text-align:left}
-    .field label{font-size:.88rem; color:#cdd6e1; text-align:left; letter-spacing:.01em; font-weight:600}
-    .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:left}
-    .input:focus{border-color:var(--brand)}
-    .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
-    #loginView .field{margin-top:10px}
-    #loginView .field:first-of-type{margin-top:0}
-
-    .btn{cursor:pointer; user-select:none; border:0; border-radius:14px; padding:12px 14px; font-weight:700; letter-spacing:.02em; display:inline-flex; align-items:center; justify-content:center; gap:8px}
-    .btn[disabled]{opacity:.6; cursor:not-allowed}
-    .btn-primary{background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:#00131f; box-shadow:0 10px 25px rgba(14,165,233,.35)}
-    .btn-ghost{background:#0b0f15; color:#fff; border:1px solid var(--border)}
-    .btn-sm{padding:8px 10px; font-size:.86rem; border-radius:12px}
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-
-    .hint{margin-top:8px; color:var(--muted); font-size:.86rem}
-    .error{color:var(--danger); font-size:.9rem; margin-top:6px}
-
-    /* Admin layout */
-    #adminView{max-width:1200px; margin:0 auto; padding:0}
-    .header{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 16px; border-bottom:1px solid var(--border)
-    }
-    .title{display:flex; gap:12px; align-items:center}
-    .title .logo{
-      width:44px; height:44px; border-radius:10px; overflow:hidden;
-      background: radial-gradient(40% 40% at 50% 50%, rgba(14,165,233,.18), transparent 70%);
-      box-shadow:0 8px 22px rgba(14,165,233,.22);
-      display:grid; place-items:center;
-    }
-    .title .logo img{width:100%; height:100%; object-fit:contain}
-    .title h2{font-family:'Orbitron'; margin:0; font-size:1.2rem}
-
-    /* === Toolbar: buscador arriba SIEMPRE, botones fluidos === */
-    .toolbar{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-      gap:10px;
-      width:100%;
-      align-items:stretch;
-    }
-    .toolbar .search{
-      grid-column:1 / -1;
-      display:flex; gap:8px; min-width:0; align-items:center;
-    }
-    .toolbar .search .input{flex:1 1 auto; width:100%}
-    .toolbar .btn{width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px; font-weight:600}
-    .toolbar .icon{font-size:1rem}
-    .toolbar .btn-search{background:rgba(14,165,233,.16); color:#38bdf8; border:1px solid rgba(14,165,233,.35)}
-    .toolbar .btn-reload{background:rgba(59,130,246,.15); color:#93c5fd; border:1px solid rgba(59,130,246,.35)}
-    .toolbar .btn-logout{background:rgba(239,68,68,.18); color:#fca5a5; border:1px solid rgba(239,68,68,.45)}
-
-    .panel{padding:16px; position:relative}
-    .stats{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px; justify-content:center}
-    .stat-card{flex:1 1 280px; min-width:260px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow)}
-    .stat-icon{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:1.3rem; background:rgba(14,165,233,.14); color:#38bdf8}
-    .stat-body{display:grid; gap:4px}
-    .stat-title{font-size:.85rem; color:var(--muted)}
-    .stat-value{font-size:1.2rem; font-weight:700}
-    .stat-sub{font-size:.8rem; color:#8fbfe6}
-
-    /* overlay loading */
-    .overlay{
-      position:absolute; inset:0; display:none; place-items:center;
-      background:rgba(0,0,0,.25); backdrop-filter: blur(2px); border-radius:var(--radius);
-    }
-    .overlay.show{display:grid}
-    .spinner{padding:10px 14px; border:1px solid var(--border); background:var(--panel); border-radius:12px; color:#8fbfe6}
-
-    .session-overlay{
-      position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(10,11,15,.45);
-      backdrop-filter: blur(6px); z-index:90; opacity:0; transition:opacity .28s ease;
-    }
-    .session-overlay.show{display:flex; opacity:1}
-    .session-box{
-      padding:16px 20px; border-radius:16px; border:1px solid var(--border); background:rgba(12,17,23,.85);
-      box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; font-weight:600; color:#8fbfe6
-    }
-    .session-box .loader{width:18px; height:18px; border-radius:50%; border:3px solid rgba(56,189,248,.4);
-      border-top-color:var(--brand-2); animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Table (desktop) */
-    .table-wrap{width:100%; overflow:auto; padding-bottom:6px}
-    table{width:100%; border-collapse:separate; border-spacing:0 10px; min-width:940px}
-    thead th{font-size:.85rem; text-align:left; color:#cdd6e1; padding:0 10px; white-space:nowrap}
-    tbody tr{background:var(--card); border:1px solid var(--border)}
-    tbody td{padding:12px 10px; vertical-align:middle}
-    tbody td:first-child{border-radius:12px 0 0 12px}
-    tbody td:last-child{border-radius:0 12px 12px 0}
-    tbody tr{transition:transform .12s ease, box-shadow .12s ease}
-    tbody tr:hover{transform:translateY(-2px); box-shadow:0 10px 16px rgba(0,0,0,.25)}
-    tbody tr td{border-top:1px solid rgba(255,255,255,.03); border-bottom:1px solid rgba(0,0,0,.25)}
-
-    /* Avatar con logo */
-    .avatar{
-      width:36px; height:36px; border-radius:10px; border:1px solid var(--border);
-      background:#0b0f15; display:grid; place-items:center; overflow:hidden;
-    }
-    .avatar img{width:100%; height:100%; object-fit:contain}
-
-    .tag{font-size:.75rem; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:#0a0f15; color:#b7c3d1}
-    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
-    .credit-badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; font-size:.8rem; font-weight:600; letter-spacing:.01em; border:1px solid transparent; flex-wrap:wrap; justify-content:flex-start}
-    .credit-badge .dot{width:10px; height:10px; border-radius:50%; display:inline-block}
-    .credit-low{background:rgba(239,68,68,.12); color:#fecaca; border-color:rgba(239,68,68,.35)}
-    .credit-low .dot{background:var(--danger)}
-    .credit-medium{background:rgba(245,158,11,.12); color:#fde68a; border-color:rgba(245,158,11,.3)}
-    .credit-high{background:rgba(34,197,94,.15); color:#bbf7d0; border-color:rgba(34,197,94,.35)}
-    .credit-high .dot{background:var(--ok)}
-    .credit-warning{margin-top:6px; padding:8px 10px; border-radius:12px; font-size:.78rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fecaca}
-    .pager{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px}
-
-    .view{opacity:0; transform:translateY(14px); transition:opacity .28s ease, transform .28s ease; pointer-events:none}
-    .view.active{opacity:1; transform:none; pointer-events:auto}
-
-    /* Empty + skeletons */
-    .empty{display:grid; place-items:center; padding:26px; color:var(--muted)}
-    .skeleton{background:linear-gradient(90deg, #0d131b, #101720, #0d131b); background-size:200% 100%; animation:shimmer 1.2s infinite; height:48px; border-radius:12px; margin:8px 0; border:1px solid var(--border)}
-    @keyframes shimmer{0%{background-position:200% 0} 100%{background-position:-200% 0}}
-
-    /* Cards (móvil) — por defecto ocultas en desktop */
-    .cards{display:none}
-    .label{font-size:.75rem; color:var(--muted)}
-
-    /* ======== Pantallas pequeñas (móvil/tablet) ======== */
-    @media (max-width: 820px){
-      /* Fondo un poco más a la izquierda */
-      body{
-        background:
-          radial-gradient(1200px 800px at 48% -16%, rgba(14,165,233,.12), transparent 40%),
-          radial-gradient(900px 600px at -22% 114%, rgba(56,189,248,.12), transparent 40%),
-          var(--bg);
-      }
-      .wrap{min-height:100%; display:grid; place-items:center; padding:16px}
-      .view{width:min(560px, 96vw); margin:0 auto}
-      .panel{padding:16px 14px 26px}
-      .header{flex-direction:column; align-items:center; gap:12px; text-align:center}
-      .title{align-items:center; justify-content:center}
-
-      /* Tabla fuera; cards visibles y centradas */
-      .table-wrap{display:none}
-      .cards{
-        display:grid; gap:12px; justify-content:center; justify-items:center; width:100%;
-      }
-      .card-row{
-        background:var(--card); border:1px solid var(--border); border-radius:14px;
-        padding:14px; display:grid; gap:10px; width:100%; max-width:520px; margin:0 auto;
-      }
-      .row-top{display:flex; align-items:center; gap:10px; justify-content:space-between}
-      .row-mid{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-      .row-actions{display:flex; gap:8px; flex-wrap:wrap}
-
-      .pager{justify-content:center}
-      .empty{place-items:center; text-align:center}
-
-      /* Modal centrado y fluido (ajustes móviles) */
-      .modal{padding:16px}
-      .modal .content{width:min(560px, 94vw); max-height:88vh}
-    }
-
-    /* ======== Micro: ultra-chicos (≤480px) ======== */
-    @media (max-width: 480px){
-      .toolbar{grid-template-columns:1fr; gap:8px}
-    }
-/* ===== Toolbar: botones en una sola línea en tablets/PC ===== */
-
-/* A partir de 640px (tablets y PC) */
-@media (min-width: 640px){
-  .toolbar{
-    display: grid;
-    grid-template-columns: 1fr auto auto auto; /* búsqueda | btn | btn | btn */
-    align-items: center;
-    gap: 12px;
-  }
-  .toolbar .search{
-    grid-column: 1 / 2;  /* buscador en la primera columna */
-    display: flex;
-    gap: 8px;
-    min-width: 0;        /* evita overflow del input */
-  }
-  .toolbar .search .input{
-    flex: 1 1 auto;
-    width: 100%;
-  }
-  .toolbar .btn{
-    width: auto;         /* que no se estiren a 100% */
-    min-width: max-content;
-    justify-content: center;
-  }
-}
-
-/* Ultra grandes (opcional): espaciar un poco más en pantallas anchas */
-@media (min-width: 1024px){
-  .toolbar{
-    gap: 14px;
-  }
-}
-
-/* En móviles (<640px) se mantiene tu layout con el buscador arriba y botones apilados */
-
-    /* ======== MODAL FIJO Y SCROLL-SEGURO + PADDING ======== */
-    .modal{
-      position: fixed;
-      inset: 0;
-      display: none;                 /* se abre con JS */
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(0,0,0,.45);
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
-      z-index: 9999;                 /* sobre todo */
-    }
-    .modal .content{
-      width: min(560px, 96vw);
-      max-height: 90vh;              /* evita cortes */
-      overflow: auto;                /* scroll interno */
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      box-shadow: var(--shadow);
-
-      /* Padding lateral para que nada toque bordes redondeados */
-      padding-left: var(--modal-pad-x);
-      padding-right: var(--modal-pad-x);
-    }
-    .modal .head,
-    .modal .foot{
-      position: sticky;
-      background: rgba(12,17,23,.95);
-      backdrop-filter: blur(4px);
-      z-index: 1;
-      padding: 12px var(--modal-pad-x); /* padding consistente */
-    }
-    .modal .head{
-      top: 0;
-      min-height: var(--modal-head-h);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .modal .body{
-      padding: var(--modal-pad-y) 0; /* laterales ya vienen de .content */
-      padding-bottom: calc(var(--modal-pad-y) + var(--modal-foot-h)); /* nada se esconde bajo el footer */
-    }
-    .modal .foot{
-      bottom: 0;
-      min-height: var(--modal-foot-h);
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    /* Pequeños: ajustamos padding/alturas para respirar mejor */
-    @media (max-width: 820px){
-      :root{
-        --modal-pad-x: 16px;
-        --modal-pad-y: 14px;
-        --modal-head-h: 52px;
-        --modal-foot-h: 60px;
-      }
-    }
-  </style>
+  <script src="app.js" defer></script>
 </head>
 <body>
   <div class="wrap">
@@ -349,7 +35,7 @@
     <section id="loginView" class="card view active" data-display="flex">
       <div class="brand">
         <div class="logo">
-          <img id="loginLogo" alt="WF TOOLS logo">
+          <img id="loginLogo" alt="WF TOOLS logo" />
         </div>
         <h1>Acceso — Administradores</h1>
         <div class="muted">WF-TOOLS<strong></strong></div>
@@ -358,9 +44,27 @@
         <label>Correo</label>
         <input id="email" class="input" type="email" placeholder="admin@tudominio.com" autocomplete="username" />
       </div>
-      <div class="field">
+      <div class="field password-field">
         <label>Contraseña</label>
-        <input id="password" class="input" type="password" placeholder="••••••••" autocomplete="current-password" />
+        <div class="input-wrap">
+          <input
+            id="password"
+            class="input"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <button id="togglePassword" type="button" class="password-toggle" aria-pressed="false">
+            <span class="icon" aria-hidden="true">👁️</span>
+            <span class="toggle-text">Mostrar</span>
+          </button>
+        </div>
+      </div>
+      <div class="login-options">
+        <label class="remember" for="rememberUser">
+          <input id="rememberUser" type="checkbox" />
+          <span>Recordar correo</span>
+        </label>
       </div>
       <button id="btnLogin" class="btn btn-primary">
         <span class="btn-text">Entrar</span>
@@ -378,7 +82,7 @@
       <header class="header">
         <div class="title">
           <div class="logo">
-            <img id="headerLogo" alt="WF TOOLS logo">
+            <img id="headerLogo" alt="WF TOOLS logo" />
           </div>
           <div>
             <h2>Panel Administración</h2>
@@ -400,7 +104,9 @@
         <div id="overlay" class="overlay"><div class="spinner">🔄 Cargando usuarios…</div></div>
 
         <div id="skeleton" style="display:none">
-          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
         </div>
 
         <!-- Desktop table -->
@@ -442,25 +148,32 @@
           <button id="closeModal" class="btn btn-ghost btn-sm">✕</button>
         </div>
         <div class="body">
-          <div class="field"><label>Correo</label>
+          <div class="field">
+            <label>Correo</label>
             <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" />
             <div id="m_email_err" class="msg-inline" style="display:none; color:var(--danger)">El email es obligatorio.</div>
           </div>
-          <div class="field"><label>Nombre</label><input id="m_name" class="input" type="text" /></div>
+          <div class="field">
+            <label>Nombre</label>
+            <input id="m_name" class="input" type="text" />
+          </div>
           <div class="row">
-            <div class="field" style="flex:1"><label>Plan</label>
+            <div class="field" style="flex:1">
+              <label>Plan</label>
               <select id="m_plan" class="input">
                 <option>Básico</option>
                 <option>Avanzado</option>
                 <option>Élite</option>
               </select>
             </div>
-            <div class="field" style="flex:1"><label>Créditos</label>
+            <div class="field" style="flex:1">
+              <label>Créditos</label>
               <input id="m_credits" class="input" type="number" min="0" />
             </div>
           </div>
           <div class="sep"></div>
-          <div class="field"><label>Nueva contraseña (opcional)</label>
+          <div class="field">
+            <label>Nueva contraseña (opcional)</label>
             <input id="m_password" class="input" type="password" placeholder="Dejar vacío para no cambiar" />
             <div id="m_pwd_err" class="msg-inline" style="display:none; color:var(--danger)">La contraseña debe tener al menos 12 caracteres.</div>
           </div>
@@ -472,445 +185,6 @@
         </div>
       </div>
     </div>
-
   </div>
-
-  <script>
-    /************* CONFIG *************/
-    const SUPABASE_URL = 'https://htkwcjhcuqyepclpmpsv.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0a3djamhjdXF5ZXBjbHBtcHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5MTk4MTgsImV4cCI6MjA3MzQ5NTgxOH0.dBeJjYm12YW27LqIxon5ifPR1ygfFXAHVg8ZuCZCEf8';
-    const ADMIN_EMAIL = 'stikmena6@gmail.com';
-    const FUNCTIONS_BASE = SUPABASE_URL.replace('.supabase.co', '.functions.supabase.co');
-
-    // ✅ Ruta del LOGO (PNG) para el UI
-    const LOGO_URL = './WF TOOLS.png';
-
-    const ENDPOINTS = {
-      list: 'admin-list',
-      update: 'admin-update',
-      recovery: 'admin-recovery',
-      setPassword: 'admin-setpassword',
-    };
-
-    /************* STATE *************/
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let page = 1; const perPage = 10; let currentRows = []; let currentEdit = null;
-
-    const qs = sel => document.querySelector(sel);
-    const $rows = qs('#rows'), $cards = qs('#cards'), $empty = qs('#empty'), $skeleton = qs('#skeleton');
-    const loginView = qs('#loginView'), adminView = qs('#adminView'), loginError = qs('#loginError');
-    const btnLogin = qs('#btnLogin'), btnLoginText = btnLogin.querySelector('.btn-text'), btnLoginSpinner = btnLogin.querySelector('.btn-spinner');
-    const $overlay = qs('#overlay');
-    const $creditSummary = qs('#creditSummary');
-    const sessionOverlay = qs('#sessionOverlay');
-    const sessionMessage = sessionOverlay?.querySelector('.session-message');
-    const numberFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
-    const averageFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
-
-    // Inyectar logo en login y header
-    qs('#loginLogo').src = LOGO_URL;
-    qs('#headerLogo').src = LOGO_URL;
-
-    /************* UI HELPERS *************/
-    function show(v){
-      if(!v) return;
-      if(v.classList && v.classList.contains('view')){
-        const desired = v.dataset.display || 'block';
-        v.style.display = desired;
-        requestAnimationFrame(()=> v.classList.add('active'));
-      } else {
-        v.style.display='block';
-      }
-    }
-    function hide(v){
-      if(!v) return;
-      if(v.classList && v.classList.contains('view')){
-        v.classList.remove('active');
-        setTimeout(()=>{ v.style.display='none'; }, 220);
-      } else {
-        v.style.display='none';
-      }
-    }
-    function overlay(on){ $overlay.classList.toggle('show', !!on); }
-    function sessionLoading(on, text='Gestionando sesión…'){
-      if(!sessionOverlay) return;
-      if(on){
-        if(sessionMessage) sessionMessage.textContent = text;
-        sessionOverlay.style.display='flex';
-        requestAnimationFrame(()=> sessionOverlay.classList.add('show'));
-      } else {
-        sessionOverlay.classList.remove('show');
-        setTimeout(()=>{
-          sessionOverlay.style.display='none';
-          if(sessionMessage) sessionMessage.textContent='';
-        }, 220);
-      }
-    }
-    function toast(msg, type='ok'){
-      const el = document.createElement('div');
-      el.textContent = msg;
-      Object.assign(el.style, { position:'fixed', bottom:'18px', right:'18px', padding:'10px 14px', border:'1px solid var(--border)', borderRadius:'12px', boxShadow:'var(--shadow)', zIndex:60 });
-      const colors = { ok:['#0c1912','#a7f3d0'], warn:['#1a150a','#fde68a'], err:['#1a0e0e','#fecaca'] };
-      const [bg, fg] = colors[type] || colors.ok; el.style.background = bg; el.style.color = fg; document.body.append(el); setTimeout(()=>el.remove(), 2800);
-    }
-
-    function avatarFor(){ return `<div class="avatar"><img src="${LOGO_URL}" alt="WF TOOLS" /></div>` }
-
-    function escapeHTML(str){
-      if(str == null) return '';
-      const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
-      return String(str).replace(/[&<>"']/g, ch => map[ch] || ch);
-    }
-    function creditMeta(rawCredits){
-      const value = Number(rawCredits ?? 0);
-      if(!Number.isFinite(value) || value <= 0) return { value:0, level:'low', text:'Sin créditos', recommend:true };
-      if(value < 20) return { value, level:'low', text:'Crédito bajo', recommend:true };
-      if(value < 60) return { value, level:'medium', text:'Nivel medio', recommend:false };
-      return { value, level:'high', text:'Nivel saludable', recommend:false };
-    }
-    function creditBadge(meta){
-      return `<div class="credit-badge credit-${meta.level}"><span class="dot"></span><span>${numberFmt.format(meta.value)} créditos</span><span>· ${meta.text}</span></div>`;
-    }
-
-    /************* AUTH & API *************/
-    async function authHeaderAsync(){
-      const { data } = await sb.auth.getSession();
-      const t = data.session?.access_token;
-      return t ? { Authorization: `Bearer ${t}` } : {};
-    }
-    async function api(path, { method='GET', headers={}, body=null, query=null } = {}){
-      const url = new URL(`${FUNCTIONS_BASE}/${path}`);
-      if(query) Object.entries(query).forEach(([k,v])=> v!=null && url.searchParams.set(k,String(v)));
-      const auth = await authHeaderAsync();
-      const res = await fetch(url, { method, headers:{ 'Content-Type':'application/json', ...auth, ...headers }, body: body? JSON.stringify(body): null });
-      if(res.status===401){ toast('Sesión expirada o no autorizada', 'warn'); await sb.auth.signOut(); hide(adminView); show(loginView); sessionLoading(false); }
-      return res;
-    }
-    async function guardAdmin(){
-      const { data } = await sb.auth.getUser();
-      const user = data?.user;
-      if(!user){ hide(adminView); show(loginView); return false; }
-      if(user.email !== ADMIN_EMAIL){ await sb.auth.signOut(); hide(adminView); show(loginView); loginError.style.display='block'; loginError.textContent='No eres administrador.'; return false; }
-      return true;
-    }
-
-    /************* AUTH FLOW *************/
-    qs('#btnLogin').addEventListener('click', async()=>{
-      loginError.style.display='none';
-      const email = qs('#email').value.trim();
-      const password = qs('#password').value;
-      if(!email || !password){ loginError.style.display='block'; loginError.textContent='Completa email y contraseña'; return; }
-      sessionLoading(true, 'Iniciando sesión…');
-      btnLogin.disabled=true; btnLoginText.style.display='none'; btnLoginSpinner.style.display='inline';
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      btnLogin.disabled=false; btnLoginText.style.display='inline'; btnLoginSpinner.style.display='none';
-      if(error){ sessionLoading(false); loginError.style.display='block'; loginError.textContent = error.message; return; }
-      const ok = await guardAdmin();
-      if(ok){
-        hide(loginView);
-        show(adminView);
-        loadUsers();
-        toast('Bienvenido, admin');
-        setTimeout(()=>sessionLoading(false), 320);
-      } else {
-        sessionLoading(false);
-      }
-    });
-
-    qs('#btnRecover').addEventListener('click', async()=>{
-      const email = qs('#email').value.trim(); if(!email){ toast('Escribe tu email para enviar el link','warn'); return; }
-      await api(ENDPOINTS.recovery, { method:'POST', body:{ email } });
-      toast('Si el correo existe, se envió link de recuperación');
-    });
-
-    qs('#btnLogout').addEventListener('click', async()=>{
-      sessionLoading(true, 'Cerrando sesión…');
-      await sb.auth.signOut();
-      hide(adminView);
-      show(loginView);
-      qs('#password').value='';
-    });
-    sb.auth.onAuthStateChange((_, s)=>{
-      if(!s){
-        hide(adminView);
-        show(loginView);
-        setTimeout(()=>sessionLoading(false), 250);
-      }
-    });
-
-    /************* LISTAR USUARIOS *************/
-    let searchTimer = null;
-    qs('#q').addEventListener('input', ()=>{
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(()=>{ page=1; loadUsers(); }, 350);
-    });
-    qs('#q').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ page=1; loadUsers(); }});
-    qs('#btnSearch').addEventListener('click', ()=>{ page=1; loadUsers(); });
-    qs('#btnReload').addEventListener('click', ()=> loadUsers());
-    qs('#prev').addEventListener('click', ()=>{ if(page>1){ page--; loadUsers(); }});
-    qs('#next').addEventListener('click', ()=>{ page++; loadUsers(); });
-
-    async function loadUsers(){
-      try{
-        overlay(true); $skeleton.style.display='block'; $rows.innerHTML=''; $cards.innerHTML=''; $empty.style.display='none';
-        const q = qs('#q').value.trim() || undefined;
-        const res = await api(ENDPOINTS.list, { query:{ page, perPage, q } });
-        if(!res.ok){ const txt = await res.text(); console.error('list error:',txt); toast('Error cargando usuarios','err'); return; }
-        const payload = await res.json(); currentRows = payload.users || [];
-        renderRows(); qs('#pageInfo').textContent = `Página ${page}`;
-      } finally {
-        $skeleton.style.display='none'; overlay(false);
-      }
-    }
-
-    function renderRows(){
-      $rows.innerHTML=''; $cards.innerHTML='';
-      $creditSummary.style.display='none';
-      if(!currentRows.length){ $empty.style.display='block'; return; }
-      $empty.style.display='none';
-
-      let totalCredits = 0;
-      let lowCount = 0;
-      let inactiveCount = 0;
-
-      for(const u of currentRows){
-        const meta = creditMeta(u.credits);
-        const creditBadgeHtml = creditBadge(meta);
-        const displayName = (u.full_name && u.full_name.trim()) || u.email || 'Usuario';
-        const safeDisplayName = escapeHTML(displayName);
-        const creditWarningHtml = meta.recommend ? `<div class="credit-warning">Recargar créditos al usuario ${safeDisplayName}</div>` : '';
-        const email = u.email || '';
-        const fullName = u.full_name || '';
-        const plan = u.plan || '—';
-        const id = u.id || '';
-        const safeEmail = escapeHTML(email);
-        const safeFullName = fullName ? escapeHTML(fullName) : '—';
-        const safePlan = escapeHTML(plan);
-        const safeId = escapeHTML(id);
-
-        totalCredits += meta.value;
-        if(meta.recommend) lowCount++;
-        if(meta.value <= 0) inactiveCount++;
-
-        // tabla
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${avatarFor()}</td>
-          <td>${safeEmail}</td>
-          <td>${safeFullName}</td>
-          <td><span class="tag">${safePlan}</span></td>
-          <td>${creditBadgeHtml}${creditWarningHtml}</td>
-          <td style="font-size:.8rem;color:var(--muted)">${safeId}</td>
-          <td>
-            <div class="actions">
-              <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${safeId}">Editar</button>
-              <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${safeEmail}">Link recuperación</button>
-              <button class="btn btn-primary btn-sm" data-act="password" data-id="${safeId}">Cambiar contraseña</button>
-            </div>
-          </td>`;
-        $rows.append(tr);
-
-        // cards (móvil)
-        const card = document.createElement('div');
-        card.className='card-row';
-        card.innerHTML = `
-          <div class="row-top">
-            <div style="display:flex; align-items:center; gap:10px">
-              ${avatarFor()}
-              <div>
-                <div style="font-weight:700">${safeFullName}</div>
-                <div class="muted" style="font-size:.85rem">${safeEmail}</div>
-              </div>
-            </div>
-            <span class="tag">${safePlan}</span>
-          </div>
-          <div class="row-mid">
-            <div><div class="label">Créditos</div><div>${creditBadgeHtml}</div></div>
-            <div><div class="label">ID</div><div style="font-size:.8rem;color:var(--muted)">${safeId}</div></div>
-          </div>
-          ${creditWarningHtml}
-          <div class="row-actions">
-            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${safeId}">Editar</button>
-            <button class="btn btn-ghost btn-sm" data-act="recovery" data-email="${safeEmail}">Recuperación</button>
-            <button class="btn btn-primary btn-sm" data-act="password" data-id="${safeId}">Cambiar contraseña</button>
-          </div>`;
-        $cards.append(card);
-      }
-
-      const totalAccounts = currentRows.length;
-      const activeCount = totalAccounts - inactiveCount;
-      const avgCredits = activeCount ? totalCredits / activeCount : 0;
-      const avgText = activeCount ? `Promedio ${averageFmt.format(avgCredits)} créditos` : 'Sin cuentas activas';
-      $creditSummary.style.display='flex';
-      $creditSummary.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-icon">💠</div>
-          <div class="stat-body">
-            <span class="stat-title">Créditos activos</span>
-            <span class="stat-value">${numberFmt.format(totalCredits)}</span>
-            <span class="stat-sub">Suma de todas las cuentas listadas</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-body">
-            <span class="stat-title">Cuentas activas</span>
-            <span class="stat-value">${activeCount}</span>
-            <span class="stat-sub">${avgText}</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🛑</div>
-          <div class="stat-body">
-            <span class="stat-title">Cuentas inactivas</span>
-            <span class="stat-value">${inactiveCount}</span>
-            <span class="stat-sub">Recarga las cuentas sin créditos</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🚨</div>
-          <div class="stat-body">
-            <span class="stat-title">Alertas de crédito</span>
-            <span class="stat-value">${lowCount}</span>
-            <span class="stat-sub">${lowCount ? 'Atiende las cuentas marcadas en rojo' : 'Todo en orden'}</span>
-          </div>
-        </div>`;
-    }
-
-    // acciones delegadas
-    document.addEventListener('click', async (e)=>{
-      const btn = e.target.closest('button'); if(!btn) return;
-      const act = btn.dataset.act; if(!act) return;
-
-      if(act==='recovery'){
-        const email = btn.dataset.email; if(!email){ toast('Ese usuario no tiene email','warn'); return; }
-        btn.disabled = true;
-        await api(ENDPOINTS.recovery, { method:'POST', body:{ email } }).catch(()=>{});
-        btn.disabled = false; toast('Link de recuperación enviado');
-      }
-
-      if(act==='password'){
-        const id = btn.dataset.id; const pwd = prompt('Nueva contraseña (mín 12, segura):'); if(!pwd) return;
-        if(pwd.length < 12){ toast('La contraseña debe tener al menos 12 caracteres','warn'); return; }
-        btn.disabled = true;
-        const res = await api(ENDPOINTS.setPassword, { method:'POST', body:{ userId:id, password:pwd } });
-        btn.disabled = false;
-        if(res.ok) toast('Contraseña actualizada'); else toast('No se pudo cambiar','err');
-      }
-
-      if(act==='edit'){
-        const id = btn.dataset.id; currentEdit = currentRows.find(x=>x.id===id); openModal(currentEdit);
-      }
-    });
-
-    /************* MODAL *************/
-    const modal = qs('#modal');
-    const m_email = qs('#m_email');
-    const m_email_err = qs('#m_email_err');
-    const m_name = qs('#m_name');
-    const m_plan = qs('#m_plan');
-    const m_credits = qs('#m_credits');
-    const m_password = qs('#m_password');
-    const m_pwd_err = qs('#m_pwd_err');
-
-    function openModal(u){
-      if(!u) return;
-      m_email.value = u.email || '';
-      m_name.value = u.full_name || '';
-      m_plan.value = u.plan || 'Básico';
-      m_credits.value = u.credits ?? 0;
-      m_password.value = '';
-      m_email.setAttribute('data-current', u.email || '');
-      m_email_err.style.display='none'; m_email.setAttribute('aria-invalid','false');
-      m_pwd_err.style.display='none'; m_password.setAttribute('aria-invalid','false');
-
-      document.body.style.overflow = 'hidden'; // bloquear scroll del fondo
-      modal.style.display='flex';
-    }
-
-    qs('#closeModal').addEventListener('click', ()=>{
-      modal.style.display='none';
-      document.body.style.overflow = ''; // restaurar scroll del fondo
-    });
-
-    function validateModal(){
-      const email = m_email.value.trim();
-      const pwd = m_password.value.trim();
-      let ok = true;
-
-      if(!email){
-        m_email_err.style.display='block';
-        m_email.setAttribute('aria-invalid','true');
-        ok = false;
-      } else {
-        m_email_err.style.display='none';
-        m_email.setAttribute('aria-invalid','false');
-      }
-
-      if(pwd && pwd.length < 12){
-        m_pwd_err.style.display='block';
-        m_password.setAttribute('aria-invalid','true');
-        ok = false;
-      } else {
-        m_pwd_err.style.display='none';
-        m_password.setAttribute('aria-invalid','false');
-      }
-
-      return ok;
-    }
-
-    qs('#btnSave').addEventListener('click', async()=>{
-      if(!currentEdit) return;
-      if(!validateModal()) return;
-
-      const payload = {
-        userId: currentEdit.id,
-        email: m_email.value.trim(),
-        full_name: (m_name.value.trim() || null),
-        plan: m_plan.value,
-        credits: Number(m_credits.value) || 0,
-        newPassword: (m_password.value.trim() || null)
-      };
-
-      const btn = qs('#btnSave'); btn.disabled = true; btn.textContent = 'Guardando…';
-      const res = await api(ENDPOINTS.update, { method:'POST', body: payload });
-      const txt = await res.text();
-      btn.disabled = false; btn.textContent = 'Guardar cambios';
-
-      if(!res.ok){
-        console.error('update error:', txt);
-        toast(`Error al guardar: ${txt}`, 'err');
-        return;
-      }
-      try { const data = JSON.parse(txt); console.log('Perfil guardado:', data.profile); } catch {}
-
-      modal.style.display='none';
-      document.body.style.overflow = ''; // restaurar scroll
-      toast('Cambios guardados');
-      loadUsers();
-    });
-
-    qs('#btnRecovery').addEventListener('click', async()=>{
-      if(!currentEdit?.email) return;
-      const btn = qs('#btnRecovery'); btn.disabled = true; btn.textContent = 'Enviando…';
-      await api(ENDPOINTS.recovery, { method:'POST', body:{ email: currentEdit.email } }).catch(()=>{});
-      btn.disabled = false; btn.textContent = 'Enviar link de recuperación';
-      toast('Link de recuperación enviado');
-    });
-
-    // Cerrar modal con tecla Escape
-    window.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape' && modal.style.display === 'flex'){
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-      }
-    });
-
-    /************* INIT *************/
-    (async()=>{
-      const ok = await guardAdmin();
-      if(ok){ hide(loginView); show(adminView); loadUsers(); }
-    })();
-  </script>
 </body>
 </html>
