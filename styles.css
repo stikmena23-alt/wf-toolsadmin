@@ -65,6 +65,16 @@ a{color:var(--brand)}
 .field label{font-size:.88rem; color:#cdd6e1; text-align:left; letter-spacing:.01em; font-weight:600}
 .input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:left}
 .input:focus{border-color:var(--brand)}
+.password-field .input-wrap{position:relative; display:flex; align-items:center}
+.password-field .input{padding-right:120px}
+.password-toggle{position:absolute; right:10px; display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:10px; border:1px solid transparent; background:rgba(12,18,26,.85); color:#8fbfe6; font-size:.78rem; font-weight:600; letter-spacing:.02em; cursor:pointer; transition:color .2s ease, border .2s ease, background .2s ease}
+.password-toggle .icon{font-size:1rem}
+.password-toggle:hover{color:#e0f2fe; border-color:rgba(148,163,184,.25)}
+.password-toggle:focus-visible{outline:2px solid var(--brand-2); outline-offset:2px}
+.password-toggle[aria-pressed="true"]{color:#fef9c3; border-color:rgba(234,179,8,.45); background:rgba(23,19,5,.65)}
+.login-options{display:flex; align-items:center; justify-content:space-between; margin:2px 0 12px; gap:16px; flex-wrap:wrap}
+.remember{display:inline-flex; align-items:center; gap:10px; font-size:.85rem; color:#cbd5f5; cursor:pointer; user-select:none}
+.remember input{width:18px; height:18px; accent-color:var(--brand-2); border-radius:4px}
 .input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
 #loginView .field{margin-top:10px}
 #loginView .field:first-of-type{margin-top:0}

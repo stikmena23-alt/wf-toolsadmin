@@ -22,16 +22,49 @@ const qs = sel => document.querySelector(sel);
 const $rows = qs('#rows'), $cards = qs('#cards'), $empty = qs('#empty'), $skeleton = qs('#skeleton');
 const loginView = qs('#loginView'), adminView = qs('#adminView'), loginError = qs('#loginError');
 const btnLogin = qs('#btnLogin'), btnLoginText = btnLogin.querySelector('.btn-text'), btnLoginSpinner = btnLogin.querySelector('.btn-spinner');
+const emailInput = qs('#email');
+const passwordInput = qs('#password');
+const rememberCheck = qs('#rememberUser');
+const togglePasswordBtn = qs('#togglePassword');
+const togglePasswordText = togglePasswordBtn?.querySelector('.toggle-text');
+const togglePasswordIcon = togglePasswordBtn?.querySelector('.icon');
 const $overlay = qs('#overlay');
 const $creditSummary = qs('#creditSummary');
 const sessionOverlay = qs('#sessionOverlay');
 const sessionMessage = sessionOverlay?.querySelector('.session-message');
 const numberFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
 const averageFmt = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 });
+const REMEMBER_KEY = 'wf-toolsadmin:remembered-email';
 
 // Inyectar logo en login y header
 qs('#loginLogo').src = LOGO_URL;
 qs('#headerLogo').src = LOGO_URL;
+
+function rememberEmail(value){
+  try {
+    const trimmed = (value || '').trim();
+    if(rememberCheck?.checked && trimmed){
+      localStorage.setItem(REMEMBER_KEY, trimmed);
+    } else {
+      localStorage.removeItem(REMEMBER_KEY);
+    }
+  } catch(err){
+    console.warn('No se pudo recordar el correo', err);
+  }
+}
+
+function loadRememberedEmail(){
+  if(!emailInput || !rememberCheck) return;
+  try {
+    const stored = localStorage.getItem(REMEMBER_KEY);
+    if(stored){
+      emailInput.value = stored;
+      rememberCheck.checked = true;
+    }
+  } catch(err){
+    console.warn('No se pudo cargar el correo recordado', err);
+  }
+}
 
 /************* UI HELPERS *************/
 function show(v){
@@ -119,14 +152,15 @@ async function guardAdmin(){
 /************* AUTH FLOW *************/
 qs('#btnLogin').addEventListener('click', async()=>{
   loginError.style.display='none';
-  const email = qs('#email').value.trim();
-  const password = qs('#password').value;
+  const email = emailInput?.value.trim();
+  const password = passwordInput?.value;
   if(!email || !password){ loginError.style.display='block'; loginError.textContent='Completa email y contraseña'; return; }
   sessionLoading(true, 'Iniciando sesión…');
   btnLogin.disabled=true; btnLoginText.style.display='none'; btnLoginSpinner.style.display='inline';
   const { error } = await sb.auth.signInWithPassword({ email, password });
   btnLogin.disabled=false; btnLoginText.style.display='inline'; btnLoginSpinner.style.display='none';
   if(error){ sessionLoading(false); loginError.style.display='block'; loginError.textContent = error.message; return; }
+  rememberEmail(email);
   const ok = await guardAdmin();
   if(ok){
     hide(loginView);
@@ -140,7 +174,7 @@ qs('#btnLogin').addEventListener('click', async()=>{
 });
 
 qs('#btnRecover').addEventListener('click', async()=>{
-  const email = qs('#email').value.trim(); if(!email){ toast('Escribe tu email para enviar el link','warn'); return; }
+  const email = emailInput?.value.trim(); if(!email){ toast('Escribe tu email para enviar el link','warn'); return; }
   await api(ENDPOINTS.recovery, { method:'POST', body:{ email } });
   toast('Si el correo existe, se envió link de recuperación');
 });
@@ -150,7 +184,7 @@ qs('#btnLogout').addEventListener('click', async()=>{
   await sb.auth.signOut();
   hide(adminView);
   show(loginView);
-  qs('#password').value='';
+  if(passwordInput) passwordInput.value='';
 });
 sb.auth.onAuthStateChange((_, s)=>{
   if(!s){
@@ -159,6 +193,57 @@ sb.auth.onAuthStateChange((_, s)=>{
     setTimeout(()=>sessionLoading(false), 250);
   }
 });
+
+togglePasswordBtn?.addEventListener('click', ()=>{
+  if(!passwordInput) return;
+  const show = passwordInput.type === 'password';
+  passwordInput.type = show ? 'text' : 'password';
+  togglePasswordBtn.setAttribute('aria-pressed', show ? 'true' : 'false');
+  if(togglePasswordText) togglePasswordText.textContent = show ? 'Ocultar' : 'Mostrar';
+  if(togglePasswordIcon) togglePasswordIcon.textContent = show ? '🙈' : '👁️';
+});
+
+rememberCheck?.addEventListener('change', ()=>{
+  if(!emailInput) return;
+  if(rememberCheck.checked){
+    rememberEmail(emailInput.value.trim());
+  } else {
+    rememberEmail('');
+  }
+});
+
+emailInput?.addEventListener('input', ()=>{
+  if(rememberCheck?.checked){
+    rememberEmail(emailInput.value.trim());
+  }
+});
+
+async function bootstrap(){
+  loadRememberedEmail();
+  sessionLoading(true, 'Verificando sesión…');
+  try{
+    const { data } = await sb.auth.getSession();
+    if(data?.session){
+      const ok = await guardAdmin();
+      if(ok){
+        hide(loginView);
+        show(adminView);
+        await loadUsers();
+        return;
+      }
+    }
+    hide(adminView);
+    show(loginView);
+  } catch(err){
+    console.error('Error verificando sesión', err);
+    hide(adminView);
+    show(loginView);
+  } finally {
+    setTimeout(()=>sessionLoading(false), 220);
+  }
+}
+
+bootstrap();
 
 /************* LISTAR USUARIOS *************/
 let searchTimer = null;

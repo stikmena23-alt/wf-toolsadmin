@@ -44,9 +44,27 @@
         <label>Correo</label>
         <input id="email" class="input" type="email" placeholder="admin@tudominio.com" autocomplete="username" />
       </div>
-      <div class="field">
+      <div class="field password-field">
         <label>Contraseña</label>
-        <input id="password" class="input" type="password" placeholder="••••••••" autocomplete="current-password" />
+        <div class="input-wrap">
+          <input
+            id="password"
+            class="input"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <button id="togglePassword" type="button" class="password-toggle" aria-pressed="false">
+            <span class="icon" aria-hidden="true">👁️</span>
+            <span class="toggle-text">Mostrar</span>
+          </button>
+        </div>
+      </div>
+      <div class="login-options">
+        <label class="remember" for="rememberUser">
+          <input id="rememberUser" type="checkbox" />
+          <span>Recordar correo</span>
+        </label>
       </div>
       <button id="btnLogin" class="btn btn-primary">
         <span class="btn-text">Entrar</span>
