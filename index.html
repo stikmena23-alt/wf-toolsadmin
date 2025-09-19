@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WF-TOOLS ADMIN</title>
+
+  <!-- ✅ Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="WF%20TOOLS.png?v=1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="WF%20TOOLS.png?v=1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="WF%20TOOLS.png?v=1" />
+  <meta name="theme-color" content="#0a0b0f" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <div id="sessionOverlay" class="session-overlay" aria-hidden="true">
+      <div class="session-box">
+        <div class="loader" aria-hidden="true"></div>
+        <span class="session-message">Gestionando sesión…</span>
+      </div>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <section id="loginView" class="card view active" data-display="flex">
+      <div class="brand">
+        <div class="logo">
+          <img id="loginLogo" alt="WF TOOLS logo" />
+        </div>
+        <h1>Acceso — Administradores</h1>
+        <div class="muted">WF-TOOLS<strong></strong></div>
+      </div>
+      <div class="field">
+        <label>Correo</label>
+        <input id="email" class="input" type="email" placeholder="admin@tudominio.com" autocomplete="username" />
+      </div>
+      <div class="field password-field">
+        <label>Contraseña</label>
+        <div class="input-wrap">
+          <input
+            id="password"
+            class="input"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <button id="togglePassword" type="button" class="password-toggle" aria-pressed="false">
+            <span class="icon" aria-hidden="true">👁️</span>
+            <span class="toggle-text">Mostrar</span>
+          </button>
+        </div>
+      </div>
+      <div class="login-options">
+        <label class="remember" for="rememberUser">
+          <input id="rememberUser" type="checkbox" />
+          <span>Recordar correo</span>
+        </label>
+      </div>
+      <button id="btnLogin" class="btn btn-primary">
+        <span class="btn-text">Entrar</span>
+        <span class="btn-spinner" style="display:none">⏳ Iniciando sesión…</span>
+      </button>
+      <div class="row login-actions" style="margin-top:10px">
+        <button id="btnRecover" class="btn btn-ghost">Olvidé mi contraseña</button>
+        <span id="loginHint" class="hint">Zona de administradores WF-TOOLS</span>
+      </div>
+      <div id="loginError" class="error" style="display:none"></div>
+    </section>
+
+    <!-- ADMIN VIEW -->
+    <section id="adminView" class="card view" data-display="block" style="display:none">
+      <header class="header">
+        <div class="title">
+          <div class="logo">
+            <img id="headerLogo" alt="WF TOOLS logo" />
+          </div>
+          <div>
+            <h2>Panel Administración</h2>
+            <div class="pill">Gestión de usuarios (Supabase)</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="search">
+            <input id="q" class="input" placeholder="Buscar por email o nombre" />
+            <button id="btnSearch" class="btn btn-search"><span class="icon">🔍</span><span>Buscar</span></button>
+          </div>
+          <button id="btnReload" class="btn btn-reload"><span class="icon">🔄</span><span>Recargar</span></button>
+          <button id="btnLogout" class="btn btn-logout"><span class="icon">✖️</span><span>Salir</span></button>
+        </div>
+      </header>
+
+      <div class="panel">
+        <div id="creditSummary" class="stats" style="display:none"></div>
+        <div id="overlay" class="overlay"><div class="spinner">🔄 Cargando usuarios…</div></div>
+
+        <div id="skeleton" style="display:none">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px"></th>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Plan</th>
+                <th>Créditos</th>
+                <th>ID</th>
+                <th style="width:300px">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <!-- Mobile cards -->
+        <div id="cards" class="cards"></div>
+
+        <div id="empty" class="empty" style="display:none">No hay usuarios para mostrar</div>
+
+        <div class="pager">
+          <button id="prev" class="btn btn-ghost btn-sm">◀</button>
+          <span id="pageInfo" class="muted">Página 1</span>
+          <button id="next" class="btn btn-ghost btn-sm">▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL EDIT -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <div class="content">
+        <div class="head">
+          <strong>Editar usuario</strong>
+          <button id="closeModal" class="btn btn-ghost btn-sm">✕</button>
+        </div>
+        <div class="body">
+          <div class="field">
+            <label>Correo</label>
+            <input id="m_email" class="input" type="email" required placeholder="usuario@correo.com" />
+            <div id="m_email_err" class="msg-inline" style="display:none; color:var(--danger)">El email es obligatorio.</div>
+          </div>
+          <div class="field">
+            <label>Nombre</label>
+            <input id="m_name" class="input" type="text" />
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Plan</label>
+              <select id="m_plan" class="input">
+                <option>Básico</option>
+                <option>Avanzado</option>
+                <option>Élite</option>
+              </select>
+            </div>
+            <div class="field" style="flex:1">
+              <label>Créditos</label>
+              <input id="m_credits" class="input" type="number" min="0" />
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div class="field">
+            <label>Nueva contraseña (opcional)</label>
+            <input id="m_password" class="input" type="password" placeholder="Dejar vacío para no cambiar" />
+            <div id="m_pwd_err" class="msg-inline" style="display:none; color:var(--danger)">La contraseña debe tener al menos 12 caracteres.</div>
+          </div>
+          <div class="hint">También puedes enviar un link de recuperación (no ve la contraseña).</div>
+        </div>
+        <div class="foot">
+          <button id="btnRecovery" class="btn btn-ghost">Enviar link de recuperación</button>
+          <button id="btnSave" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

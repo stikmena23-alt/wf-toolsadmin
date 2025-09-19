@@ -1,0 +1,340 @@
+:root{
+  --bg:#0a0b0f; --panel:#0f121a; --muted:#9aa4b2; --text:#e6edf3; --brand:#0ea5e9; --brand-2:#38bdf8;
+  --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --card:#0c1117; --border:#1b2330; --radius:18px;
+  --shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.03);
+
+  /* ===== Modal spacing vars ===== */
+  --modal-pad-x: 20px;   /* padding horizontal del modal */
+  --modal-pad-y: 16px;   /* padding vertical del modal   */
+  --modal-head-h: 56px;  /* alto mínimo del header modal */
+  --modal-foot-h: 64px;  /* alto mínimo del footer modal */
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:'Space Grotesk',ui-sans-serif,system-ui;
+  background:
+    radial-gradient(1200px 800px at 70% -10%,rgba(14,165,233,.12),transparent 40%),
+    radial-gradient(900px 600px at -10% 110%,rgba(56,189,248,.12),transparent 40%),
+    var(--bg);
+  color:var(--text);
+}
+a{color:var(--brand)}
+.wrap{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  place-content:center;
+  padding:clamp(20px, 4vw, 32px);
+  position:relative;
+}
+
+.view{
+  width:min(100%, 1200px);
+  margin-inline:auto;
+}
+
+/* Card base */
+.card{
+  width:100%;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+/* Login */
+#loginView{
+  max-width:520px; padding:32px; position:relative; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px
+}
+#loginView .btn{width:100%}
+#loginView .login-actions{width:100%; display:flex; flex-direction:column; gap:10px; align-items:stretch; text-align:center}
+.brand{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px}
+.brand .logo{
+  width:140px; height:140px; display:grid; place-items:center; border-radius:18px;
+  background: radial-gradient(40% 40% at 50% 50%, rgba(14,165,233,.18), transparent 70%);
+  box-shadow:0 12px 38px rgba(14,165,233,.28); overflow:hidden;
+}
+.brand .logo img{width:100%; height:100%; object-fit:contain}
+.brand h1{font-family:'Orbitron',ui-sans-serif; font-size:1.4rem; letter-spacing:.04em; margin:6px 0 0}
+.muted{color:var(--muted); font-size:.92rem}
+
+.field{display:grid; gap:6px; margin:12px 0; width:100%; text-align:left}
+.field label{font-size:.88rem; color:#cdd6e1; text-align:left; letter-spacing:.01em; font-weight:600}
+.input{border:1px solid var(--border); border-radius:14px; padding:12px 14px; background:#0b0f15; color:#fff; outline:none; width:100%; text-align:left}
+.input:focus{border-color:var(--brand)}
+.password-field .input-wrap{position:relative; display:flex; align-items:center}
+.password-field .input{padding-right:120px}
+.password-toggle{position:absolute; right:2px; display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:10px; border:0; background:rgba(12,18,26,.85); color:#8fbfe6; font-size:.78rem; font-weight:600; letter-spacing:.02em; cursor:pointer; transition:color .2s ease, background .2s ease}
+.password-toggle .icon{font-size:1rem}
+.password-toggle:hover{color:#e0f2fe; background:rgba(24,32,45,.85)}
+.password-toggle:focus-visible{outline:none}
+.password-toggle[aria-pressed="true"]{color:#fef9c3; background:rgba(23,19,5,.65)}
+.login-options{display:flex; align-items:center; justify-content:space-between; margin:2px 0 12px; gap:16px; flex-wrap:wrap}
+.remember{display:inline-flex; align-items:center; gap:10px; font-size:.85rem; color:#cbd5f5; cursor:pointer; user-select:none}
+.remember input{width:18px; height:18px; accent-color:var(--brand-2); border-radius:4px}
+.input[aria-invalid="true"]{border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+#loginView .field{margin-top:10px}
+#loginView .field:first-of-type{margin-top:0}
+
+.btn{cursor:pointer; user-select:none; border:0; border-radius:14px; padding:12px 14px; font-weight:700; letter-spacing:.02em; display:inline-flex; align-items:center; justify-content:center; gap:8px}
+.btn[disabled]{opacity:.6; cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:#00131f; box-shadow:0 10px 25px rgba(14,165,233,.35)}
+.btn-ghost{background:#0b0f15; color:#fff; border:1px solid var(--border)}
+.btn-sm{padding:8px 10px; font-size:.86rem; border-radius:12px}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+.hint{margin-top:8px; color:var(--muted); font-size:.86rem}
+.error{color:var(--danger); font-size:.9rem; margin-top:6px}
+
+/* Admin layout */
+#adminView{max-width:1200px; margin:0 auto; padding:0}
+.header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; border-bottom:1px solid var(--border)
+}
+.title{display:flex; gap:12px; align-items:center}
+.title .logo{
+  width:44px; height:44px; border-radius:10px; overflow:hidden;
+  background: radial-gradient(40% 40% at 50% 50%, rgba(14,165,233,.18), transparent 70%);
+  box-shadow:0 8px 22px rgba(14,165,233,.22);
+  display:grid; place-items:center;
+}
+.title .logo img{width:100%; height:100%; object-fit:contain}
+.title h2{font-family:'Orbitron'; margin:0; font-size:1.2rem}
+
+/* === Toolbar: buscador arriba SIEMPRE, botones fluidos === */
+.toolbar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:10px;
+  width:100%;
+  align-items:stretch;
+}
+.toolbar .search{
+  grid-column:1 / -1;
+  display:flex; gap:8px; min-width:0; align-items:center;
+}
+.toolbar .search .input{flex:1 1 auto; width:100%}
+.toolbar .btn{width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px; font-weight:600}
+.toolbar .icon{font-size:1rem}
+.toolbar .btn-search{background:rgba(14,165,233,.16); color:#38bdf8; border:1px solid rgba(14,165,233,.35)}
+.toolbar .btn-reload{background:rgba(59,130,246,.15); color:#93c5fd; border:1px solid rgba(59,130,246,.35)}
+.toolbar .btn-logout{background:rgba(239,68,68,.18); color:#fca5a5; border:1px solid rgba(239,68,68,.45)}
+
+.panel{padding:16px; position:relative}
+.stats{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px; justify-content:center}
+.stat-card{flex:1 1 280px; min-width:260px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow)}
+.stat-icon{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:1.3rem; background:rgba(14,165,233,.14); color:#38bdf8}
+.stat-body{display:grid; gap:4px}
+.stat-title{font-size:.85rem; color:var(--muted)}
+.stat-value{font-size:1.2rem; font-weight:700}
+.stat-sub{font-size:.8rem; color:#8fbfe6}
+
+/* overlay loading */
+.overlay{
+  position:absolute; inset:0; display:none; place-items:center;
+  background:rgba(0,0,0,.25); backdrop-filter: blur(2px); border-radius:var(--radius);
+}
+.overlay.show{display:grid}
+.spinner{padding:10px 14px; border:1px solid var(--border); background:var(--panel); border-radius:12px; color:#8fbfe6}
+
+.session-overlay{
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(10,11,15,.45);
+  backdrop-filter: blur(6px); z-index:90; opacity:0; transition:opacity .28s ease;
+}
+.session-overlay.show{display:flex; opacity:1}
+.session-box{
+  padding:16px 20px; border-radius:16px; border:1px solid var(--border); background:rgba(12,17,23,.85);
+  box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; font-weight:600; color:#8fbfe6
+}
+.session-box .loader{width:18px; height:18px; border-radius:50%; border:3px solid rgba(56,189,248,.4);
+  border-top-color:var(--brand-2); animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Table (desktop) */
+.table-wrap{width:100%; overflow:auto; padding-bottom:6px}
+table{width:100%; border-collapse:separate; border-spacing:0 10px; min-width:940px}
+thead th{font-size:.85rem; text-align:left; color:#cdd6e1; padding:0 10px; white-space:nowrap}
+tbody tr{background:var(--card); border:1px solid var(--border)}
+tbody td{padding:12px 10px; vertical-align:middle}
+tbody td:first-child{border-radius:12px 0 0 12px}
+tbody td:last-child{border-radius:0 12px 12px 0}
+tbody tr{transition:transform .12s ease, box-shadow .12s ease}
+tbody tr:hover{transform:translateY(-2px); box-shadow:0 10px 16px rgba(0,0,0,.25)}
+tbody tr td{border-top:1px solid rgba(255,255,255,.03); border-bottom:1px solid rgba(0,0,0,.25)}
+
+/* Avatar con logo */
+.avatar{
+  width:36px; height:36px; border-radius:10px; border:1px solid var(--border);
+  background:#0b0f15; display:grid; place-items:center; overflow:hidden;
+}
+.avatar img{width:100%; height:100%; object-fit:contain}
+
+.tag{font-size:.75rem; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:#0a0f15; color:#b7c3d1}
+.actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+.credit-badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; font-size:.8rem; font-weight:600; letter-spacing:.01em; border:1px solid transparent; flex-wrap:wrap; justify-content:flex-start}
+.credit-badge .dot{width:10px; height:10px; border-radius:50%; display:inline-block}
+.credit-low{background:rgba(239,68,68,.12); color:#fecaca; border-color:rgba(239,68,68,.35)}
+.credit-low .dot{background:var(--danger)}
+.credit-medium{background:rgba(245,158,11,.12); color:#fde68a; border-color:rgba(245,158,11,.3)}
+.credit-high{background:rgba(34,197,94,.15); color:#bbf7d0; border-color:rgba(34,197,94,.35)}
+.credit-high .dot{background:var(--ok)}
+.credit-warning{margin-top:6px; padding:8px 10px; border-radius:12px; font-size:.78rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fecaca}
+.pager{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px}
+
+.view{opacity:0; transform:translateY(14px); transition:opacity .28s ease, transform .28s ease; pointer-events:none}
+.view.active{opacity:1; transform:none; pointer-events:auto}
+
+/* Empty + skeletons */
+.empty{display:grid; place-items:center; padding:26px; color:var(--muted)}
+.skeleton{background:linear-gradient(90deg, #0d131b, #101720, #0d131b); background-size:200% 100%; animation:shimmer 1.2s infinite; height:48px; border-radius:12px; margin:8px 0; border:1px solid var(--border)}
+@keyframes shimmer{0%{background-position:200% 0} 100%{background-position:-200% 0}}
+
+/* Cards (móvil) — por defecto ocultas en desktop */
+.cards{display:none}
+.label{font-size:.75rem; color:var(--muted)}
+
+/* ======== Pantallas pequeñas (móvil/tablet) ======== */
+@media (max-width: 820px){
+  /* Fondo un poco más a la izquierda */
+  body{
+    background:
+      radial-gradient(1200px 800px at 48% -16%, rgba(14,165,233,.12), transparent 40%),
+      radial-gradient(900px 600px at -22% 114%, rgba(56,189,248,.12), transparent 40%),
+      var(--bg);
+  }
+  .wrap{padding:20px 16px}
+  .view{width:min(560px, 96vw)}
+  .panel{padding:16px 14px 26px}
+  .header{flex-direction:column; align-items:center; gap:12px; text-align:center}
+  .title{align-items:center; justify-content:center}
+
+  /* Tabla fuera; cards visibles y centradas */
+  .table-wrap{display:none}
+  .cards{
+    display:grid; gap:12px; justify-content:center; justify-items:center; width:100%;
+  }
+  .card-row{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px; display:grid; gap:10px; width:100%; max-width:520px; margin:0 auto;
+  }
+  .row-top{display:flex; align-items:center; gap:10px; justify-content:space-between}
+  .row-mid{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .row-actions{display:flex; gap:8px; flex-wrap:wrap}
+
+  .pager{justify-content:center}
+  .empty{place-items:center; text-align:center}
+
+  /* Modal centrado y fluido (ajustes móviles) */
+  .modal{padding:16px}
+  .modal .content{width:min(560px, 94vw); max-height:88vh}
+}
+
+/* ======== Micro: ultra-chicos (≤480px) ======== */
+@media (max-width: 480px){
+  .toolbar{grid-template-columns:1fr; gap:8px}
+}
+/* ===== Toolbar: botones en una sola línea en tablets/PC ===== */
+
+/* A partir de 640px (tablets y PC) */
+@media (min-width: 640px){
+  .toolbar{
+    display: grid;
+    grid-template-columns: 1fr auto auto auto; /* búsqueda | btn | btn | btn */
+    align-items: center;
+    gap: 12px;
+  }
+  .toolbar .search{
+    grid-column: 1 / 2;  /* buscador en la primera columna */
+    display: flex;
+    gap: 8px;
+    min-width: 0;        /* evita overflow del input */
+  }
+  .toolbar .search .input{
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  .toolbar .btn{
+    width: auto;         /* que no se estiren a 100% */
+    min-width: max-content;
+    justify-content: center;
+  }
+}
+
+/* Ultra grandes (opcional): espaciar un poco más en pantallas anchas */
+@media (min-width: 1024px){
+  .toolbar{
+    gap: 14px;
+  }
+}
+
+/* En móviles (<640px) se mantiene tu layout con el buscador arriba y botones apilados */
+
+/* ======== MODAL FIJO Y SCROLL-SEGURO + PADDING ======== */
+.modal{
+  position: fixed;
+  inset: 0;
+  display: none;                 /* se abre con JS */
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 9999;                 /* sobre todo */
+}
+.modal .content{
+  width: min(560px, 96vw);
+  max-height: 90vh;              /* evita cortes */
+  overflow: auto;                /* scroll interno */
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+
+  /* Padding lateral para que nada toque bordes redondeados */
+  padding-left: var(--modal-pad-x);
+  padding-right: var(--modal-pad-x);
+}
+.modal .head,
+.modal .foot{
+  position: sticky;
+  background: rgba(12,17,23,.95);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+  padding: 12px var(--modal-pad-x); /* padding consistente */
+}
+.modal .head{
+  top: 0;
+  min-height: var(--modal-head-h);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal .body{
+  padding: var(--modal-pad-y) 0; /* laterales ya vienen de .content */
+  padding-bottom: calc(var(--modal-pad-y) + var(--modal-foot-h)); /* nada se esconde bajo el footer */
+}
+.modal .foot{
+  bottom: 0;
+  min-height: var(--modal-foot-h);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Pequeños: ajustamos padding/alturas para respirar mejor */
+@media (max-width: 820px){
+  :root{
+    --modal-pad-x: 16px;
+    --modal-pad-y: 14px;
+    --modal-head-h: 52px;
+    --modal-foot-h: 60px;
+  }
+}
+
